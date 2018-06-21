@@ -20,7 +20,7 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 		private int kubappuix, kubappuiy, kubappuiz;
 		private int kubxchute, kubychute, kubzchute;
 		private float anglechute;
-		private bool yacubstop = false, yamurstop = false, wait = false, bougepas = false, kubdesequilibre = false; 
+		private bool yacubstop = false, wait = false, bougepas = false, kubdesequilibre = false; 
 		private float waittime;
 		[HideInInspector]
 		public bool sautpret=false, ensaut=false, enchute = false, pousse = false;
@@ -105,7 +105,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 
 						if (yacube) {
 								yacubstop = true;
-								yamurstop = false;
 								transform.position = new Vector3 (stoppos - (transform.localScale.x * 0.51F), transform.position.y, transform.position.z);
 						} /* else {
 								yacubstop = false;
@@ -115,7 +114,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 										yamurstop = true;
 								} */ else {
 								transform.position = posfuture;
-								yamurstop = false;
 								yacubstop = false;
 
 						}
@@ -146,7 +144,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 						}
 						if (yacube) {
 								yacubstop = true;
-								yamurstop = false;
 								transform.position = new Vector3 (stoppos + (transform.localScale.x * 0.51F), transform.position.y, transform.position.z);
 						} /* else {
 								yacubstop = false;
@@ -156,7 +153,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 										yamurstop = true;
 								} */ else {
 										transform.position = posfuture;
-										yamurstop = false;
 								yacubstop = false;
 								}
 						//}
@@ -186,7 +182,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 						}
 						if (yacube) {
 								yacubstop = true;
-								yamurstop = false;
 								transform.position = new Vector3 (transform.position.x, transform.position.y, stoppos - (transform.localScale.x * 0.51F));
 						} /* else {
 
@@ -197,7 +192,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 										yamurstop = true;
 								} */ else {
 										transform.position = posfuture;
-										yamurstop = false;
 								yacubstop = false;
 								}
 						//}
@@ -227,7 +221,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 						}
 						if (yacube) {
 								yacubstop = true;
-								yamurstop = false;
 								transform.position = new Vector3 (transform.position.x, transform.position.y, stoppos + (transform.localScale.x * 0.51F));
 						} /*else {
 
@@ -238,7 +231,6 @@ public class Controle_Personnage_Intro_2 : MonoBehaviour {
 										yamurstop = true;
 								} */ else {
 										transform.position = posfuture;
-										yamurstop = false;
 								yacubstop = false;
 								}
 						//}
