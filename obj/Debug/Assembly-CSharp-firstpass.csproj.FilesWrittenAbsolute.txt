@@ -1,0 +1,17 @@
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/Nico/Ubik's Cube/obj/Debug/Assembly-CSharp-firstpass.dll
+/Users/Nico/Ubik's Cube/obj/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/UnityEngine.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/UnityEditor.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Mono.Cecil.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Unity.DataContract.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/Nico/Ubik's Cube/Temp/bin/Debug/Mono.Cecil.Mdb.dll

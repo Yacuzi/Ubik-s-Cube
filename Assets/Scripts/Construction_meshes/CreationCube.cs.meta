@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 838399542f2ce41618c8e5d83bce9f49
+timeCreated: 1467538771
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - Coin: {fileID: 457664, guid: aaeaec4007c92487fbe97b2e91d863cb, type: 2}
+  - Angle: {fileID: 406416, guid: 734f2d91a847e40f4a6f2adaf68d6c7e, type: 2}
+  - Tuile: {fileID: 433666, guid: f4b1c525f20644ac4b270b1406a55be2, type: 2}
+  - Vide: {fileID: 425456, guid: 7676c7e12c73d4d31b9f47647e34a62b, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

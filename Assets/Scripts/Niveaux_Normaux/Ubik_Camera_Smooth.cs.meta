@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 99a3dc926478442d7a4c0e5e68cf1afb
+timeCreated: 1467568687
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - God: {fileID: 437224, guid: c511fa1bf18bb43b8a78e68277fbe860, type: 2}
+  - Perso: {fileID: 437748, guid: 7e304b328196c436a92e46aa0fdf0b1e, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
