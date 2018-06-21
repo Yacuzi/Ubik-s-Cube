@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Niveaux/Ubik_Niveau_1_2.unity
+- path: Assets/Niveaux/Jeu/Ubik_Intro_1.unity
   isLoaded: 1
   isActive: 1
