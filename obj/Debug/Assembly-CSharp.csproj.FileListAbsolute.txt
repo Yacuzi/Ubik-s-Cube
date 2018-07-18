@@ -2,7 +2,6 @@ C:\Users\nicolas.noel\Documents\Ubik-s-Cube\obj\Debug\Assembly-CSharp.csprojReso
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\obj\Debug\Assembly-CSharp.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Assembly-CSharp.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Assembly-CSharp.pdb
-C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Assembly-UnityScript-firstpass.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\nunit.framework.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.Advertisements.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.Analytics.dll
@@ -44,7 +43,6 @@ C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Unity.Cecil.Mdb.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Unity.CecilTools.dll
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Unity.Cecil.Pdb.dll
-C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\Assembly-CSharp-firstpass.pdb
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEngine.xml
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.xml
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEngine.UI.xml
@@ -68,3 +66,5 @@ C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEngine.SpatialTr
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.VR.xml
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.iOS.Extensions.Xcode.xml
 C:\Users\nicolas.noel\Documents\Ubik-s-Cube\obj\Debug\Assembly-CSharp.pdb
+C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.LinuxStandalone.Extensions.dll
+C:\Users\nicolas.noel\Documents\Ubik-s-Cube\Temp\bin\Debug\UnityEditor.WebGL.Extensions.dll

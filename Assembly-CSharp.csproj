@@ -51,12 +51,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Canvas\Activate_Awake.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\Angle.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\Angle_Verriere.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\Coin.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\Coin_Verriere.cs" />
-     <Compile Include="Assets\Scripts\Construction_meshes\Creation_Cube_Plein.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\CreationCube.cs" />
+     <Compile Include="Assets\Scripts\Construction_meshes\Editeur_creation_cube.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\ObjExporter.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\Sauvegarde_Meshes.cs" />
      <Compile Include="Assets\Scripts\Construction_meshes\Tuile.cs" />
@@ -157,6 +158,12 @@
  </Reference>
  <Reference Include="UnityEditor.Graphs">
  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.Graphs.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.WebGL.Extensions">
+ <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.LinuxStandalone.Extensions">
+ <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/UnityEditor.LinuxStandalone.Extensions.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>

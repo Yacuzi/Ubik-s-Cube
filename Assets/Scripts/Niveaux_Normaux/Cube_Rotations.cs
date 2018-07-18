@@ -37,6 +37,7 @@ public class Cube_Rotations : MonoBehaviour {
 		 
 	// Use this for initialization
 	void Start () {
+		
 				//Récupération de la taille du cube
 				hauteur = God.GetComponent<CreationCube> ().Hauteur;
 				longueur = God.GetComponent<CreationCube> ().Longueur;

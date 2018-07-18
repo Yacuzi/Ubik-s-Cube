@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AntiKub : MonoBehaviour {
+public class AntiKub : MonoBehaviour
+{
 
 	// Use this for initialization
-				void Start () {
-						/*
+	void Start ()
+	{
+		/*
 						 * 
 						//Récupération de la taille du cube
 						hauteur = God.GetComponent<CreationCube> ().Hauteur;
@@ -30,10 +32,11 @@ public class AntiKub : MonoBehaviour {
 								Debug.Log (antikub[i].name);
 						}
 						*/
-		}
+	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 	
 	}
 }

@@ -1,21 +1,6 @@
 WindowsStandalone
 SceneListBegin?
-Assets/Niveaux/Jeu/Ubik_Intro_1.unity
-Assets/Niveaux/Jeu/Ubik_Intro_2.unity
 Assets/Niveaux/Jeu/Ubik_Intro_3.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_1_1.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_1_2.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_1_3.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_1_4.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_1_5.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_1_6.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_2_1.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_2_2.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_2_3.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_2_4.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_2_5_Fin_Acte_I.unity
-Assets/Niveaux/Jeu/Ubik_Niveau_3_1.unity
-Assets/Niveaux/Jeu/Generique.unity
 SceneListEnd?
 05524b8f659e7bfe5756d1335fec24ba UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationPlayableAsset
 dbc29a6f2739d277c10da432d73adb6d UnityEngine.Timeline.dll:UnityEngine.Timeline.ActivationTrack

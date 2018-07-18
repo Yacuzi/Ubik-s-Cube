@@ -1,6 +1,14 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Niveaux_Normaux\Sortie.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Niveaux_Normaux\Ubik_Camera_Smooth.cs" Line="26" Column="26" />
+      <File FileName="Assets\Scripts\Niveaux_Normaux\Controle_Personnage.cs" Line="5" Column="26" />
+      <File FileName="Assets\Scripts\Introduction\Controle_Personnage_Intro.cs" Line="60" Column="44" />
+      <File FileName="Assets\Scripts\Niveaux_Normaux\Cube_Rotations.cs" Line="9" Column="27" />
+      <File FileName="Assets\Scripts\Niveaux_Normaux\Sortie.cs" Line="35" Column="82" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
