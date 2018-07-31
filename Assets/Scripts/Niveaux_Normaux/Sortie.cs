@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class Sortie : MonoBehaviour
 {
 
-	public GameObject Perso;
+	private GameObject Perso;
 	private Vector3 regardperso, posperso;
 	private Color couleur;
 	public string niveausuivant;
@@ -14,7 +14,7 @@ public class Sortie : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-
+		Perso = GameObject.FindGameObjectWithTag ("Player");
 	}
 	
 	// Update is called once per frame

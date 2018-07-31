@@ -2,212 +2,226 @@
 using System.Collections;
 using UnityEngine.Scripting;
 
-public class Ubik_Camera_Smooth : MonoBehaviour {
+public class Ubik_Camera_Smooth : MonoBehaviour
+{
+	public float smoothTime = 2F;
+	[HideInInspector]
+	public bool vuesecondaire;
+	[HideInInspector]
+	public Vector3[] poscam = new Vector3[4];
+	[HideInInspector]
+	public Vector3[] poscamsec = new Vector3[4];
+	[HideInInspector]
+	public int finpoin = 0;
+	public float delayrotcam = 1f;
 
-		public Transform God, Perso;
-		public float smoothTime = 2F;
-		public bool rotcam = true;
-		private Vector3 velocity = Vector3.zero;
-		[HideInInspector]
-		public bool rotationH, rotationAH, vuesecondaire, changvue;
-		private Vector3 finishpoint, CubPos, possecond;
-		private Quaternion CubRot;
-		private int largeur= 3 , longueur = 3, hauteur = 3;
-		private float camhaut;
-		private float milx=0F, mily=0F, milz=0F;
-		private Vector3 target;
-		private float persox, persoy, persoz;
-		private bool Larg, Long, Haut;
-		[HideInInspector]
-		public Vector3 a, b, c, d;
-		[HideInInspector]
-		public Vector3 abis, bbis, cbis, dbis;
-		[HideInInspector]
-		public int finpoin = 0;
+	private GameObject God, Perso;
+	private Vector3 velocity = Vector3.zero;
+	private bool rotationH, rotationAH;
+	private Vector3 finishpoint;
+	private Vector3 target;
+	private Vector3 cameraposprec;
 
-		// Use this for initialization
-		void Start () {
-				
-				//Récupérer le milieu et la taille depuis Cube_Creation
-				hauteur = God.GetComponent<CreationCube>().Hauteur;
-				longueur = God.GetComponent<CreationCube>().Longueur;
-				largeur = God.GetComponent<CreationCube>().Largeur;
+	private float timer;
 
-				//Creation du point central pour la caméra
-				milx = (float)(((float) longueur / 2) - 0.5F);
-				mily = (float)(((float) hauteur / 2) - 0.5F);
-				milz = (float)(((float) largeur / 2) - 0.5F);
-				target = new Vector3 (milx,mily,milz);
+	// Use this for initialization
+	void Start ()
+	{
+		//Je dit que je peut tourner la caméra
+		timer = delayrotcam;
 
-				//je définis la position de la caméra pour avoir le bon angle (qui fait des jeux de perspectives)
-				a = new Vector3 (milx - 4F, mily + 4F, milz - 4F);
-				b = new Vector3 (milx - 4F, mily + 4F, milz + 4F);
-				c = new Vector3 (milx + 4F, mily + 4F, milz + 4F);
-				d = new Vector3 (milx + 4F, mily + 4F, milz - 4F);
+		//Je récupère le perso et le god
+		Perso = GameObject.FindGameObjectWithTag ("Player");
+		God = GameObject.FindGameObjectWithTag ("God");
 
-				//j'initialise la caméra
-				transform.position = a;
+		//Récupérer le milieu et la taille depuis Cube_Creation
+		int hauteur = God.GetComponent<CreationCube> ().Hauteur;
+		int longueur = God.GetComponent<CreationCube> ().Longueur;
+		int largeur = God.GetComponent<CreationCube> ().Largeur;
+
+		//Creation du point central pour la caméra
+		float milx = (float)(((float)longueur / 2) - 0.5F);
+		float mily = (float)(((float)hauteur / 2) - 0.5F);
+		float milz = (float)(((float)largeur / 2) - 0.5F);
+		target = new Vector3 (milx, mily, milz);
+
+		//je définis la position de la caméra pour avoir le bon angle (qui fait des jeux de perspectives)
+		poscam [0] = new Vector3 (milx - 4F, mily + 4F, milz - 4F);
+		poscam [1] = new Vector3 (milx - 4F, mily + 4F, milz + 4F);
+		poscam [2] = new Vector3 (milx + 4F, mily + 4F, milz + 4F);
+		poscam [3] = new Vector3 (milx + 4F, mily + 4F, milz - 4F);
+
+		//j'initialise la caméra
+		cameraposprec = poscam [GetCamNumber ()];
+		transform.position = poscam [GetCamNumber ()];
+		transform.LookAt (target);				
+	}
+
+	// Update is called once per frame
+	void Update ()
+	{
+		//J'incrémente le timer
+		MyTimer();
+
+		//J'adapte la caméra à la situation actuelle
+		OrthoSize ();
+		CameraLookAt ();
+		CameraPos ();
+
+		//Je récupère les inputs du joueur
+		ChangeVue ();
+		GetInputRotation ();
+
+		//Je sauvegarde l'ancienne position de la caméra
+		SaveCameraPosPrec ();
+	}
+
+	void GetInputRotation ()
+	{
+		//je détermine à quel point est la caméra selon la rotation
+		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && IsNotRotating ()) {
+			timer = 0;
+			rotationH = true;
+			ChangeCameraPos (1);
+		}
+
+		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && IsNotRotating ()) {
+			timer = 0;
+			rotationAH = true;
+			ChangeCameraPos (-1);
+		}
+	}
+
+	void MyTimer ()
+	{
+		//J'incrémente mon timer à chaque seconde
+		timer += Time.deltaTime;
+	}
+
+	//Pour checker si je prépare une rotation
+	bool IsNotRotating ()
+	{
+		//pour vérification si la largeur/hauteur/longueur est sélectionnée
+		bool Larg = GetComponent<Cube_Rotations> ().Estlarg;
+		bool Long = GetComponent<Cube_Rotations> ().Estlong;
+		bool Haut = GetComponent<Cube_Rotations> ().Esthaut;
+
+		if ((Larg) || (Long) || (Haut))
+			return false;
+		else
+			return true;
+	}
+
+	//La fonction qui dit où est-ce que l caméra regarde
+	void CameraLookAt ()
+	{
+		//Je change le regard que si je fais un rotation
+		if (rotationAH || rotationH) {
+			//je regarde toujours dans la bonne direction
+			if (!vuesecondaire)
 				transform.LookAt (target);
-				
+			else
+				transform.LookAt (Perso.transform);
+		}
+	}
+
+	//Pour déterminer le point de position de la caméra
+	void ChangeCameraPos (int sens)
+	{
+		if (finpoin + sens >= 0)
+			finpoin += sens;
+		else
+			finpoin = 3;
+	}
+
+	public int GetCamNumber ()
+	{
+			return finpoin % 4;
+	}
+
+	//Pour déterminer l'orthographic size
+	void OrthoSize ()
+	{
+		//Ma variable de taille orthographique
+		float orthosize = 1.5f;
+		float vel = 0f;
+
+		//Récupérer le milieu et la taille depuis Cube_Creation
+		int hauteur = God.GetComponent<CreationCube> ().Hauteur;
+		int longueur = God.GetComponent<CreationCube> ().Longueur;
+		int largeur = God.GetComponent<CreationCube> ().Largeur;
+
+		//choix du "zoom" de la caméra
+		if (!vuesecondaire) {
+			if ((hauteur > longueur) || (hauteur > largeur))
+				orthosize = (hauteur + longueur + largeur) * 0.35F;
+			else
+				orthosize = (hauteur + longueur + largeur) * 0.3F;
 		}
 
-		// Update is called once per frame
-		void Update () {
+		if (vuesecondaire)
+			orthosize = 1.5F;
 
-				//je regarde toujours dans la bonne direction
-				if (!vuesecondaire)
-						transform.LookAt (target);
-				
-				//pour vérification si la largeur/hauteur/longueur est sélectionnée
-				Larg = GetComponent<Cube_Rotations>().Estlarg;
-				Long = GetComponent<Cube_Rotations>().Estlong;
-				Haut = GetComponent<Cube_Rotations>().Esthaut;
-				
-				//choix du "zoom" de la caméra
-				if (!vuesecondaire) {
-						if ((hauteur > longueur) | (hauteur > largeur))
-								Camera.main.orthographicSize = (hauteur + longueur + largeur) * 0.35F;
-						else
-								Camera.main.orthographicSize = (hauteur + longueur + largeur) * 0.3F;
-				}
+		Camera.main.orthographicSize = Mathf.SmoothDamp (Camera.main.orthographicSize, orthosize, ref vel, smoothTime / 4);
+	}
 
-				if (vuesecondaire)
-						Camera.main.orthographicSize = 1.5F;
-				
-				//transition de la vue secondaire à la vue principale
-				if (Input.GetButtonDown ("Vue")) {
-						vuesecondaire = !vuesecondaire;
-						changvue = true;
-				}
-
-				if ((!vuesecondaire) & (changvue)){
-						transform.position = finishpoint;
-				}
-
-				if ((vuesecondaire) & (changvue)) {
-						transform.position = possecond;
-						transform.LookAt (Perso);
-				}
-
-				//je réinitialise la caméra pour le changement de point de vue
-				if ((transform.position == a) ^ (transform.position == b) ^ (transform.position == c) ^ (transform.position == d)
-						^ (transform.position == abis) ^ (transform.position == bbis) ^ (transform.position == cbis) ^ (transform.position == dbis))
-						changvue = false;
-				
-				//je détermine à quel point est la caméra selon la rotation
-				if (((transform.position == a) ^ (transform.position == b) ^ (transform.position == c) ^ (transform.position == d))
-						& (Input.GetButtonDown ("CameraH")) & (!rotationAH) & (!vuesecondaire) & (!Larg) & (!Long) & (!Haut) & (rotcam)) {
-						rotationH = true;
-						if (finpoin != 3)
-								finpoin++;
-						else
-								finpoin = 0;
-				}
-				if (((transform.position == a) ^ (transform.position == b) ^ (transform.position == c) ^ (transform.position == d))
-						& (Input.GetButtonDown ("CameraAH")) & (!rotationH) & (!vuesecondaire) & (!Larg) & (!Long) & (!Haut) & (rotcam)) {
-						rotationAH = true;
-						if (finpoin != 0)
-								finpoin--;
-						else
-								finpoin = 3;
-				}
-
-				//je définit la position de la caméra principale
-				if ((finpoin == 0) & (!vuesecondaire))
-						finishpoint = a;
-				else if ((finpoin == 1) & (!vuesecondaire))
-						finishpoint = b;
-				else if ((finpoin == 2) & (!vuesecondaire))
-						finishpoint = c;
-				else if ((finpoin == 3) & (!vuesecondaire))
-						finishpoint = d;
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++VUE PRINCIPALE+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-				//je fais les rotations horaires
-				if ((rotationH) & (!vuesecondaire)) {
-						transform.position = Vector3.SmoothDamp (transform.position, finishpoint, ref velocity, smoothTime * Time.deltaTime);
-						transform.LookAt (target);
-				}
-
-				//je fais les rotations anti-horaires
-				if ((rotationAH) & (!vuesecondaire)) {
-						transform.position = Vector3.SmoothDamp (transform.position, finishpoint, ref velocity, smoothTime * Time.deltaTime);
-						transform.LookAt (target);
-				}
-
-				//je réinitialise la caméra
-				if ((transform.position == a) ^ (transform.position == b)
-				    ^ (transform.position == c) ^ (transform.position == d)
-				    & (!vuesecondaire)) {
-						rotationH = false;
-						rotationAH = false;
-				}
-
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++VUE SECONDAIRE+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		
-				//je récupère la position du perso
-				persox = Perso.position.x;
-				persoy = Perso.position.y;
-				persoz = Perso.position.z;
-
-				//positions successives de la caméra secondaire
-				abis = new Vector3 (persox - 0.8F, persoy + 0.8F, persoz - 0.8F);
-				bbis = new Vector3 (persox - 0.8F, persoy + 0.8F, persoz + 0.8F);
-				cbis = new Vector3 (persox + 0.8F, persoy + 0.8F, persoz + 0.8F);
-				dbis = new Vector3 (persox + 0.8F, persoy + 0.8F, persoz - 0.8F);
-
-				//je détermine à quel point est la caméra selon la rotation
-				if (((transform.position == abis) ^ (transform.position == bbis) ^ (transform.position == cbis) ^ (transform.position == dbis))
-						& (Input.GetButtonDown ("CameraH")) & (!rotationAH) & (vuesecondaire)) {
-						rotationH = true;
-						if (finpoin != 3)
-								finpoin++;
-						else
-								finpoin = 0;
-				}
-				if (((transform.position == abis) ^ (transform.position == bbis) ^ (transform.position == cbis) ^ (transform.position == dbis))
-						& (Input.GetButtonDown ("CameraAH")) & (!rotationH) & (vuesecondaire)) {
-						rotationAH = true;
-						if (finpoin != 0)
-								finpoin--;
-						else
-								finpoin = 3;
-				}
-
-				//je définit la position de la caméra principale
-				if ((finpoin == 0) & (vuesecondaire))
-						possecond = abis;
-				else if ((finpoin == 1) & (vuesecondaire))
-						possecond = bbis;
-				else if ((finpoin == 2) & (vuesecondaire))
-						possecond = cbis;
-				else if ((finpoin == 3) & (vuesecondaire))
-						possecond = dbis;
-
-				//je déplace la caméra avec le personnage
-				if ((vuesecondaire) & (!rotationH) & (!rotationAH)) {
-						transform.position = possecond;
-				}
-
-				//je fais les rotations horaires
-				if ((rotationH) & (vuesecondaire)) {
-						transform.position = Vector3.SmoothDamp (transform.position, possecond, ref velocity, smoothTime * Time.deltaTime);
-						transform.LookAt (Perso);
-				}
-
-				//je fais les rotations horaires
-				if ((rotationAH) & (vuesecondaire)) {
-						transform.position = Vector3.SmoothDamp (transform.position, possecond, ref velocity, smoothTime * Time.deltaTime);
-						transform.LookAt (Perso);
-				}
-
-				//je réinitialise la caméra
-				if ((transform.position == abis) ^ (transform.position == bbis)
-						^ (transform.position == cbis) ^ (transform.position == dbis)
-						& (vuesecondaire)) {
-						rotationH = false;
-						rotationAH = false;
-				}
+	//Pour faire la transition entre les vues
+	void ChangeVue ()
+	{
+		//transition de la vue secondaire à la vue principale
+		if (Input.GetButtonDown ("Vue") && CameraStable()) {
+			timer = 0;
+			vuesecondaire = !vuesecondaire;
 		}
+	}
+
+	//Pour checker si la caméra ne bouge pas
+	bool CameraStable ()
+	{
+		if (Camera.main.transform.position - cameraposprec == Vector3.zero)
+			return true;
+		else
+			return false;
+	}
+
+	//Pour sauvegarder la précédente posisiont de la caméra
+	void SaveCameraPosPrec ()
+	{
+		cameraposprec = Camera.main.transform.position;
+	}
+
+	//Pour déterminer où placer la caméra dans le contexte actuel
+	void CameraPos ()
+	{
+		if (!vuesecondaire) {
+
+			//Je détermine vers où doit aller la caméra
+			finishpoint = poscam[GetCamNumber ()];
+
+		} else {
+			
+			//Je récupère la position du perso
+			float persox = Perso.transform.position.x;
+			float persoy = Perso.transform.position.y;
+			float persoz = Perso.transform.position.z;
+
+			//Positions successives de la caméra secondaire
+			poscamsec [0] = new Vector3 (persox - 0.8F, persoy + 0.8F, persoz - 0.8F);
+			poscamsec [1] = new Vector3 (persox - 0.8F, persoy + 0.8F, persoz + 0.8F);
+			poscamsec [2] = new Vector3 (persox + 0.8F, persoy + 0.8F, persoz + 0.8F);
+			poscamsec [3] = new Vector3 (persox + 0.8F, persoy + 0.8F, persoz - 0.8F);
+
+			//Je définit la position de la caméra principale
+			finishpoint = poscamsec [GetCamNumber ()];
+		}		
+
+		//Je déplace la caméra où je le souhaite
+		transform.position = Vector3.SmoothDamp (transform.position, finishpoint, ref velocity, smoothTime);
+
+		//Je réinitialise la caméra
+		if (CameraStable ()) {
+			rotationH = false;
+			rotationAH = false;
+		}
+	}
 }

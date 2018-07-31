@@ -68,7 +68,7 @@ public class Cube_Rotations : MonoBehaviour {
 				Kubs.CopyTo (TousCubes, Cubes.Length + Antikub.Length);
 
 		}
-	
+
 	// Update is called once per frame
 	void Update ()
 		{
@@ -86,13 +86,7 @@ public class Cube_Rotations : MonoBehaviour {
 				//je fais en sorte que l'action ne se passe qu'une fois
 				if ((!enhaut) & (!enbas) & (!adroite) & (!agauche) & (!unefois))
 						unefois = true;
-
-				//Récupération de la position de la caméra
-				A = GetComponent<Ubik_Camera_Smooth> ().a;
-				B = GetComponent<Ubik_Camera_Smooth> ().b;
-				C = GetComponent<Ubik_Camera_Smooth> ().c;
-				D = GetComponent<Ubik_Camera_Smooth> ().d;
-
+				
 				//je créé un tableau avec toutes les coordonnées des antikub
 				antikub = GameObject.FindGameObjectsWithTag("Antikub");
 				int[] Antilongueur = new int[antikub.Length];
