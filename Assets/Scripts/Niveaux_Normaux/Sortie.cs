@@ -23,7 +23,7 @@ public class Sortie : MonoBehaviour
 
 		//Je récupère la position du personnage et son regard et son état
 		posperso = Perso.transform.position;
-		regardperso = Perso.GetComponent<Controle_Personnage> ().regard;
+		regardperso = Perso.GetComponent<Controle_Personnage> ().direction;
 		saut = Perso.GetComponent<Controle_Personnage> ().ensaut;
 		chute = Perso.GetComponent<Controle_Personnage> ().enchute;
 	

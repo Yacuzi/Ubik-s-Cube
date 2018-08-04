@@ -78,14 +78,14 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 
 	void GetInputRotation ()
 	{
-		//je détermine à quel point est la caméra selon la rotation
-		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && IsNotRotating ()) {
+		//jJe détermine à quel point est la caméra selon la rotation
+		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && Perso.GetComponent<Cube_Rotations>().IsNotRotating ()) {
 			timer = 0;
 			rotationH = true;
 			ChangeCameraPos (1);
 		}
 
-		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && IsNotRotating ()) {
+		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && Perso.GetComponent<Cube_Rotations>().IsNotRotating ()) {
 			timer = 0;
 			rotationAH = true;
 			ChangeCameraPos (-1);
@@ -96,20 +96,6 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	{
 		//J'incrémente mon timer à chaque seconde
 		timer += Time.deltaTime;
-	}
-
-	//Pour checker si je prépare une rotation
-	bool IsNotRotating ()
-	{
-		//pour vérification si la largeur/hauteur/longueur est sélectionnée
-		bool Larg = GetComponent<Cube_Rotations> ().Estlarg;
-		bool Long = GetComponent<Cube_Rotations> ().Estlong;
-		bool Haut = GetComponent<Cube_Rotations> ().Esthaut;
-
-		if ((Larg) || (Long) || (Haut))
-			return false;
-		else
-			return true;
 	}
 
 	//La fonction qui dit où est-ce que l caméra regarde

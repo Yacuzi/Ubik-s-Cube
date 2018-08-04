@@ -10,14 +10,15 @@ public class Kub_mobile : MonoBehaviour
 	private bool kubappui, enrotation, pointaffecte;
 	private int largeur, longueur;
 	private int kubx, kuby, kubz;
-	private GameObject[] kubs;
+	private GameObject[] allcubes;
 	[HideInInspector]
 	public bool pretbouger = false, bouger = false;
 
 	// Use this for initialization
 	void Start ()
 	{
-				
+		//je récupère le tableau des kubs
+		allcubes = Perso.GetComponent<Cube_Rotations> ().GetKubs();	
 	}
 	
 	// Update is called once per frame
@@ -27,19 +28,16 @@ public class Kub_mobile : MonoBehaviour
 		//je récupère les valeurs liées au personnage
 		possaut = Perso.GetComponent<Controle_Personnage> ().possaut;
 		direction = Perso.GetComponent<Controle_Personnage> ().direction;
-		regard = Perso.GetComponent<Controle_Personnage> ().regard;
+		regard = Perso.GetComponent<Controle_Personnage> ().direction;
 
 		//je récupère les données liées au niveau
 		largeur = God.GetComponent<CreationCube> ().Largeur;
 		longueur = God.GetComponent<CreationCube> ().Longueur;
 
-		//je récupère le tableau des kubs
-		kubs = Perso.GetComponent<Controle_Personnage> ().kubs;
-
 		//je vérifie s'il y a une rotation
-		if ((Camera.main.GetComponent<Cube_Rotations> ().Esthaut)
-		      | (Camera.main.GetComponent<Cube_Rotations> ().Estlarg)
-		      | (Camera.main.GetComponent<Cube_Rotations> ().Estlong))
+		if ((Camera.main.GetComponent<Cube_Rotations> ().Haut)
+		      | (Camera.main.GetComponent<Cube_Rotations> ().Larg)
+		      | (Camera.main.GetComponent<Cube_Rotations> ().Long))
 			enrotation = true;
 		else
 			enrotation = false;
@@ -92,7 +90,7 @@ public class Kub_mobile : MonoBehaviour
 				bouger = true;
 						
 			//je vérifie qu'il y a pas de kub qui bloque le mouvement
-			foreach (GameObject kub in kubs) {
+			foreach (GameObject kub in allcubes) {
 
 				kubx = Mathf.RoundToInt (kub.transform.position.x);
 				kuby = Mathf.RoundToInt (kub.transform.position.y);
@@ -109,7 +107,7 @@ public class Kub_mobile : MonoBehaviour
 			}
 
 			//je vérifie qu'il y aura un kub sous le joueur
-			foreach (GameObject kub in kubs) {
+			foreach (GameObject kub in allcubes) {
 
 				kubx = Mathf.RoundToInt (kub.transform.position.x);
 				kuby = Mathf.RoundToInt (kub.transform.position.y);
