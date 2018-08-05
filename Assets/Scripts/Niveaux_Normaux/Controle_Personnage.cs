@@ -7,8 +7,6 @@ public class Controle_Personnage : MonoBehaviour
 	public float vitesse = 5f, vitpetit = 1f, gravite = 1f, speedrot = 90f, speedbalance = 45f;
 	public LayerMask themask;
 	[HideInInspector]
-	public bool devant, derriere, gauche, droite;
-	[HideInInspector]
 	public bool ensaut, enchute, equilibre, balance, pousse;
 	[HideInInspector]
 	public Vector3 directiontemp, direction, possaut;
@@ -491,6 +489,14 @@ public class Controle_Personnage : MonoBehaviour
 		{
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 		}
+	}
+
+	public bool Immobile () //Fonction pour savoir si le personnage a fini toutes ses actions
+	{
+		if (!moving && !ensaut && !equilibre && !enchute && !pousse)
+			return true;
+		else
+			return false;
 	}
 
 	// Use this for initialization
