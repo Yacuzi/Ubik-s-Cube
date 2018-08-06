@@ -34,45 +34,45 @@ public class Controle_Personnage : MonoBehaviour
 			directiontemp = Vector3.right;
 		}
 		else if ((Input.GetButton ("Bas") && !wait) || (Input.GetAxisRaw ("VerticalJ") == 1))
-		{			
-			if (onedirection)
-			{
-				directiontemp = Vector3.zero;
-				return;
+			{			
+				if (onedirection)
+				{
+					directiontemp = Vector3.zero;
+					return;
+				}
+				onedirection = true;
+				directiontemp = Vector3.left;
 			}
-			onedirection = true;
-			directiontemp = Vector3.left;
-		}
-		else if ((Input.GetButton ("Gauche") && !wait) || (Input.GetAxisRaw ("HorizontalJ") == -1))
-		{			
-			if (onedirection)
-			{
-				directiontemp = Vector3.zero;
-				return;
-			}
-			onedirection = true;
-			directiontemp = Vector3.forward;
-		}
-		else if ((Input.GetButton ("Droite") && !wait) || (Input.GetAxisRaw ("HorizontalJ") == 1))
-		{			
-			if (onedirection)
-			{
-				directiontemp = Vector3.zero;
-				return;
-			}
-			onedirection = true;
-			directiontemp = Vector3.back;
-		}
-		else
-		{
-			directiontemp = Vector3.zero;
-		}
+			else if ((Input.GetButton ("Gauche") && !wait) || (Input.GetAxisRaw ("HorizontalJ") == -1))
+				{			
+					if (onedirection)
+					{
+						directiontemp = Vector3.zero;
+						return;
+					}
+					onedirection = true;
+					directiontemp = Vector3.forward;
+				}
+				else if ((Input.GetButton ("Droite") && !wait) || (Input.GetAxisRaw ("HorizontalJ") == 1))
+					{			
+						if (onedirection)
+						{
+							directiontemp = Vector3.zero;
+							return;
+						}
+						onedirection = true;
+						directiontemp = Vector3.back;
+					}
+					else
+					{
+						directiontemp = Vector3.zero;
+					}
 	}
 
 	//Fonction pour voir si c'est un kub surlequel on peut sauter
 	bool Jumpable ()
 	{
-		if (kubobstacle.transform.tag != "Cube")
+		if ((kubobstacle.transform.tag != "Cube") && (kubobstacle.transform.tag != "Verriere"))
 			return true;
 		else
 			return false;
@@ -100,8 +100,8 @@ public class Controle_Personnage : MonoBehaviour
 		//Pour tous les kubs
 		foreach (GameObject kubtest in allcubes)
 		{
-			//Si ce n'est pas un kub de la verriere
-			if (kubtest.tag != "Cube")
+			//Si ce n'est pas un cube de la verriere
+			if ((kubtest.tag != "Cube") && (kubtest.tag != "Verriere"))
 			{
 				//Coordonnées du kub pour lequel on teste s'il peut gêner
 				int kubtestx = Mathf.RoundToInt (kubtest.transform.position.x);
@@ -114,7 +114,7 @@ public class Controle_Personnage : MonoBehaviour
 				else if ((kubtesty - 1F == persoy) && (kubtestx == persox) && (kubtestz == persoz))
 				//S'il y a un kub au-dessus du joueur
 					return false;
-				else if (persoy + 1F == God.GetComponent<CreationCube> ().Hauteur)
+					else if (persoy + 1F == God.GetComponent<CreationCube> ().Hauteur)
 				//Si le joueur est au plus haut du niveau
 						return false;
 			}
@@ -195,7 +195,7 @@ public class Controle_Personnage : MonoBehaviour
 		if (wait)
 		{
 			waittime += Time.deltaTime;
-			if (waittime >= 0.2f)
+			if (waittime >= 0.1f)
 			{
 				waittime = 0F;
 				wait = false;
@@ -270,10 +270,10 @@ public class Controle_Personnage : MonoBehaviour
 			}
 			//S'il n'avance plus mais qu'il ne se balance pas, je le recentre
 			else if (!balance)
-			{
-				if (CenterCharacter ())
-					equilibre = false;
-			}
+				{
+					if (CenterCharacter ())
+						equilibre = false;
+				}
 
 			//Si le perso se balance
 			if (balance)
@@ -460,7 +460,7 @@ public class Controle_Personnage : MonoBehaviour
 				{
 					//Je vérifie si le joueur est bloqué dans son saut
 					if (CanJump ())
-					{						
+					{	
 						//Je colorie le bloc sur lequel on peut sauter en vert et je dis que le joueur peut sauter
 						Kubinfos.ColorBlock (kubsaut.gameObject, Color.green);
 						InputJump ();
@@ -468,18 +468,18 @@ public class Controle_Personnage : MonoBehaviour
 				}	
 			}
 			else if (GetKubAppui ()) //Je fait un raycast qui check s'il y a du sol là où veut aller le joueur				
-			{
-				moving = true; //Je dis que je peux bouger le joueur
-			}
-			else
-			{
-				//Je récupère le kub qui est sous le joueur
-				GetKubSupport ();
-				//Je sauvegarde le sens dans lequel il est quand il commence à se mettre en équilibre
-				direquil = direction;
-				//Je le met en équilibre au bord du kub sur lequel il est
-				equilibre = true;
-			}
+				{
+					moving = true; //Je dis que je peux bouger le joueur
+				}
+				else
+				{
+					//Je récupère le kub qui est sous le joueur
+					GetKubSupport ();
+					//Je sauvegarde le sens dans lequel il est quand il commence à se mettre en équilibre
+					direquil = direction;
+					//Je le met en équilibre au bord du kub sur lequel il est
+					equilibre = true;
+				}
 		}
 	}
 
@@ -516,12 +516,16 @@ public class Controle_Personnage : MonoBehaviour
 	void Update ()
 	{
 		//Si je suis pas en train de préparer une rotation
-		if (Kubinfos.IsNotRotating ())
+		if (!Kubinfos.RotationReady ())
 		{
 			Reset ();
 			Kubinfos.ResetKubsColor ();
 
-			MoveInput ();
+			if (!Kubinfos.RotationOn ()) //Je ne reçois les inputs que si aucune rotation n'est en cours
+			{
+				MoveInput ();
+			}
+
 			Regard ();
 			MoveChecker ();
 			Move ();

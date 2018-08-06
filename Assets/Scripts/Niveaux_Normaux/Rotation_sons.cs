@@ -3,8 +3,7 @@ using System.Collections;
 
 public class Rotation_sons : MonoBehaviour
 {
-	private GameObject Perso;
-	private bool rotation1, rotation2;
+	private Cube_Rotations Perso;
 	private int alea;
 	private AudioSource[] sonrotation;
 	private AudioClip leson;
@@ -16,20 +15,14 @@ public class Rotation_sons : MonoBehaviour
 		//Je dis où est ma source audio
 		sonrotation = GetComponents<AudioSource> ();
 		//Je dis où est le perso
-		Perso = GameObject.FindGameObjectWithTag("Player");
-
+		Perso = GameObject.FindGameObjectWithTag ("Player").GetComponent<Cube_Rotations> ();
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-	
-		//je définis les variables de rotation
-		rotation1 = Perso.GetComponent<Cube_Rotations> ().RotationH;
-		rotation2 = Perso.GetComponent<Cube_Rotations> ().RotationAH;
-
-		//je regarde s'il y a une rotation et si le son est en cours et je joue un son au hasard
-		if (((rotation1) | (rotation2)) & (!sonencours))
+		if (Perso.RotationOn() && !sonencours) //Je regarde s'il y a une rotation et si le son est en cours et je joue un son au hasard
+			
 		{
 			sonencours = true;
 			alea = (int)Random.Range (0, 6);
@@ -37,7 +30,7 @@ public class Rotation_sons : MonoBehaviour
 			sonrotation [alea].PlayOneShot (leson);
 		}
 
-		if ((!rotation1) & (!rotation2))
+		if (!Perso.RotationOn()) //Je réinitialise les sons de rotation
 			sonencours = false;
 	}
 }

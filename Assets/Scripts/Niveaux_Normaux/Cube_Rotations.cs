@@ -16,7 +16,7 @@ public class Cube_Rotations : MonoBehaviour
 	private Controle_Personnage Perso;
 	private int pointfinal;
 
-	private List<GameObject> cubesrot = new List<GameObject> ();
+	private List<GameObject> cubesrot = new List<GameObject> (), verriererot = new List<GameObject> ();
 	private GameObject[] allcubes;
 	private int rangeex = 0, rangeey = 0, rangeez = 0;
 	private int longueur, hauteur, largeur;
@@ -50,15 +50,30 @@ public class Cube_Rotations : MonoBehaviour
 
 	public void ColorBlock (GameObject lekub, Color lacouleur) //La fonction pour colorier un bloc d'une certaine couleur
 	{
-		Renderer kubcolor = lekub.GetComponent<Renderer> (); //Je colorie le bloc si c'est pas un mur
-		kubcolor.material.color = lacouleur;
+		if (lekub.tag == "Verriere") //Si c'est un morceau de verriere je change l'alpha
+			lacouleur.a = lekub.GetComponent<Renderer> ().material.color.a;
+		else
+			lacouleur.a = 0.5f;
+
+		if (lekub.GetComponent<Renderer> ())
+		{
+			Renderer kubcolor = lekub.GetComponent<Renderer> (); //Je colorie le bloc si c'est pas un mur
+			kubcolor.material.color = lacouleur;
+		}
 	}
 
 	public void ResetKubsColor () //Pour remettre tous les kubs en blanc
 	{
+		Color lacouleur = Color.white;
+
 		foreach (GameObject lekub in allcubes)
 		{
-			ColorBlock (lekub, Color.white);
+			if (lekub.tag == "Verriere") //Je laisse la verriere transparente
+				lacouleur.a = lekub.GetComponent<Renderer> ().material.color.a;
+			else
+				lacouleur.a = 0.5f;
+			
+			ColorBlock (lekub, lacouleur);
 		}
 	}
 
@@ -67,10 +82,12 @@ public class Cube_Rotations : MonoBehaviour
 		GameObject[] cubes = GameObject.FindGameObjectsWithTag ("Cube") as GameObject[]; //Recherche de tous les cubes
 		GameObject[] kubs = GameObject.FindGameObjectsWithTag ("Kubs") as GameObject[]; //Recherche de tous les kubs
 		GameObject[] antikubs = GameObject.FindGameObjectsWithTag ("Antikub") as GameObject[]; //Recherche de tous les antikubs
-		allcubes = new GameObject[cubes.Length + kubs.Length + antikubs.Length];
+		GameObject[] verriere = GameObject.FindGameObjectsWithTag ("Verriere") as GameObject[]; //Recherche de tous les kubs de la verriere
+		allcubes = new GameObject[cubes.Length + kubs.Length + antikubs.Length + verriere.Length];
 		cubes.CopyTo (allcubes, 0);
 		kubs.CopyTo (allcubes, cubes.Length);
 		antikubs.CopyTo (allcubes, cubes.Length + kubs.Length);
+		verriere.CopyTo (allcubes, cubes.Length + kubs.Length + antikubs.Length);
 	}
 
 	public GameObject[] GetKubs () //Pour récupérer les infos sur les kubs
@@ -78,30 +95,22 @@ public class Cube_Rotations : MonoBehaviour
 		return allcubes;
 	}
 
-	public bool IsNotRotating () //Pour checker si je prépare une rotation
+	public bool RotationReady () //Pour checker si je prépare une rotation
 	{
 		if ((Larg) || (Long) || (Haut))
-			return false;
-		else
 			return true;
+		else
+			return false;
 	}
 
 	bool InputPrepareRotation () //Méthode pour déterminer quelle partie du Cube le joueur sélectionne
 	{
 		if (Perso.Immobile ()) //Si le perso a fini toutes ses actions je peux sélectionner quelquechose
 		{
-			if (Input.GetButton ("Largeur"))
-			{
-				Larg = true;
-			}
-			if (Input.GetButton ("Hauteur"))
-			{
-				Haut = true;
-			}
-			if (Input.GetButton ("Longueur"))
-			{
-				Long = true;
-			}
+			Larg = Input.GetButton ("Largeur");
+			Haut = Input.GetButton ("Hauteur");
+			Long = Input.GetButton ("Longueur");
+
 			if (!(Larg ^ Haut ^ Long) || (Larg && Haut && Long)) //Si j'appuie sur deux boutons en même temps
 			{
 				return false;
@@ -115,10 +124,10 @@ public class Cube_Rotations : MonoBehaviour
 
 	void CheckAntiKub (GameObject kub)
 	{
-		if (kub.tag == "AntiKub")
+		if (kub.tag == "Antikub") //Si ya un antikub
 		{
-			rotantikub = true;
-			lacouleur = Color.black;
+			rotantikub = true; //Je déclare qu'il y a un antikub
+			lacouleur = Color.black; //On coloriera tout en noir parce que c'est trop dark
 		}
 	}
 
@@ -188,56 +197,96 @@ public class Cube_Rotations : MonoBehaviour
 
 	void SelectCubes () //Le fonction pour sélectionner les cubes et le colorer
 	{
-		rotantikub = false; //Je réinitialise le fait qu'il y ait des antikubs ou non
-		cubesrot.Clear (); //Je réinitialise le tableau des cubes sélectionnés
-
-		foreach (GameObject kub in allcubes) //Je cherche dans tous les cubes
+		if (RotationReady ()) //Si je suis en train de faire une rotation
 		{
-			if (KubInRow (kub, rangee)) //Si le cube est dans la rangee qui m'intéresse
+			rotantikub = false; //Je réinitialise le fait qu'il y ait des antikubs ou non
+			cubesrot.Clear (); //Je réinitialise le tableau des cubes sélectionnés
+			verriererot.Clear (); //Je réinitialise le tableau des verrieres sélectionnées
+
+			foreach (GameObject kub in allcubes) //Je cherche dans tous les cubes les cubes que je veux tourner
 			{
-				cubesrot.Add (kub); //J'ajoute le cube à la liste des cubes que je vais potentiellement faire tourner
-				CheckAntiKub (kub); //Je regarde si c'est un antikub
-				ColorBlock (kub, lacouleur); //Je colorie le bloc de la bonne couleur
+				if (KubInRow (kub, rangee)) //Si le cube est dans la rangee qui m'intéresse
+				{
+					if (kub.tag != "Verriere") //Je n'ajoute pas les verrieres à la liste, car ce sont des enfants des autres cubes, ça créé des bugs à la con
+					{
+						cubesrot.Add (kub); //J'ajoute le cube à la liste des cubes que je vais potentiellement faire tourner
+					}
+					else
+						verriererot.Add (kub); //Si c'est un morceau de verrière je l'ajoute à mon tableau de verriere pour le problème de couleur
+				}
 			}
+
+			foreach (GameObject kub in cubesrot) //Je regarde si il y a un antikub dans la rangee, si c'est le cas, je change la couleur et je déclare qu'il y a un antikub				
+				CheckAntiKub (kub);
+			
+			foreach (GameObject kub in cubesrot) //Je colorie tous les blocs de la rangee de la bonne couleur		
+				ColorBlock (kub, lacouleur); //Je colorie le bloc
+
+			foreach (GameObject kub in verriererot) //Je colorie les bloc de la verrière dans la rangee de la bonne couleur
+				ColorBlock (kub, lacouleur);
 		}
 	}
 
 	void InputRangee () //La méthode pour récupérer les inputs de changements de rangee
 	{
-		if (Input.GetAxisRaw ("VerticalJ") == 0) //Si je relache le stick de manette je peux à nouveau changer de direction			
+		if (RotationReady ()) //Je ne prend les inputs que si une rotation est prête
+		{
+			//Je réinitialise les valeurs avant
+			goup = false;
+			godown = false;
+			goleft = false;
+			goright = false;
+
+			if (Input.GetAxisRaw ("VerticalJ") == 0) //Si je relache le stick de manette je peux à nouveau changer de direction			
 			axisreleased = true;
-		if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") == -1 && axisreleased))
-		{
-			axisreleased = false;
-			goup = true;
-		}
-		if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") == 1 && axisreleased))
-		{
-			axisreleased = false;
-			godown = true;
-		}
-		if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("HorizontalJ") == -1 && axisreleased))
-		{
-			axisreleased = false;
-			goleft = true;
-		}
-		if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("HorizontalJ") == 1 && axisreleased))
-		{
-			axisreleased = false;
-			goright = true;
+		
+			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") == -1 && axisreleased))
+			{
+				axisreleased = false;
+				goup = true;
+			}
+			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") == 1 && axisreleased))
+			{
+				axisreleased = false;
+				godown = true;
+			}
+			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("HorizontalJ") == -1 && axisreleased))
+			{
+				axisreleased = false;
+				goleft = true;
+			}
+			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("HorizontalJ") == 1 && axisreleased))
+			{
+				axisreleased = false;
+				goright = true;
+			}
 		}
 	}
 
-	int PointBit (int number, bool decalage) //La fonction qui permet d'obtenir 0 deux fois puis 1 deux fois etc... avec possibilité de décalage (0,1,1,0,0,...)
+	int SimplePointBit (int number, int frequence, int decalage, int result1, int result2) //La méthode moins conne et plus souple pour obtenir une alternance entre deux chiffres toutes les x fois
 	{
-		string pointbit = "";
-			
-		if (decalage)
-			pointbit = (number + 1).ToString ();
+		if (((number + 1) + decalage) % (frequence * 2) >= frequence)
+			return result1;
 		else
-			pointbit = number.ToString ();
-			
-		return (int)pointbit [1];
+			return result2;
+	}
+
+	int PointBit (int number, bool decalage, int digit) //La fonction qui permet d'obtenir 0 deux fois puis 1 deux fois etc... avec possibilité de décalage (0,1,1,0,0,...)
+	{	
+		int num = number;
+		int bit = 0;
+
+		if (decalage) //Je crée le décalage
+		{
+			num = number + 1;
+		}
+
+		for (int i = 0; i < digit; i++) //Je récupère de manière foireuse le bon chiffre binaire que je veux
+		{
+			bit = num % 2;
+			num /= 2;
+		}
+		return bit;
 	}
 
 	void ChangeRangee () //Pour déterminer dans quel sens va le changement de rangee en fonction de la caméra et de la rangee selectionnée
@@ -253,31 +302,43 @@ public class Cube_Rotations : MonoBehaviour
 		if (rangee == "x") //Si je sélectionne la largeur, la caméra change des trucs, c'est moins sympa mais ça se fait
 		{
 			if (goleft)
-				rangeex += (2 * PointBit (pointfinal, true)) - 1;
+				rangeex += (2 * PointBit (pointfinal, true, 2)) - 1;
 			if (goright)
-				rangeex -= (2 * PointBit (pointfinal, true)) - 1;
+				rangeex -= (2 * PointBit (pointfinal, true, 2)) - 1;
+			if (rangeex < 0) //Je corrige si besoin est
+				rangeex = 0;
+			if (rangeex > largeur - 1)
+				rangeex = largeur - 1;
 		}
 		if (rangee == "z") //Si je sélectionne la longueur, la caméra change des trucs, c'est moins sympa mais ça se fait
 		{
+			
 			if (goleft)
-				rangeez -= (2 * PointBit (pointfinal, false)) - 1;
+				rangeez -= (2 * PointBit (pointfinal, false, 2)) - 1;
 			if (goright)
-				rangeez += (2 * PointBit (pointfinal, false)) - 1;
+				rangeez += (2 * PointBit (pointfinal, false, 2)) - 1;
+			if (rangeez < 0) //Je corrige si besoin est
+				rangeez = 0;
+			if (rangeez > longueur - 1)
+				rangeez = longueur - 1;
 		}
 	}
 
 	void InputRotation () //Méthode pour récupérer les inputs de rotation des cubes
 	{
-		if (Input.GetButtonDown ("RotationH") || Input.GetAxisRaw ("RotationJH") == 1 && !RotationAH && !RotationH) // Si je veux trouner dans le sens horaire et qu'une rotation est pas en cours
+		if (RotationReady ())
+		{
+			if (Input.GetButtonDown ("RotationH") || Input.GetAxisRaw ("RotationJH") == 1 && !RotationAH && !RotationH) // Si je veux trouner dans le sens horaire et qu'une rotation est pas en cours
 			if (PersoRangee () || rotantikub) //Si le perso est dans la rangée ou qu'il y a un antikub dans la rangée, je clignote et ne tourne pas
 				cligne = true;
-			else
-				RotationH = true;
-		if (Input.GetButtonDown ("RotationAH") || Input.GetAxisRaw ("RotationJAH") == 1 && !RotationAH && !RotationH) // Si je veux trouner dans le sens anti-horaire et qu'une rotation est pas en cours
+				else
+					RotationH = true;
+			if (Input.GetButtonDown ("RotationAH") || Input.GetAxisRaw ("RotationJAH") == 1 && !RotationAH && !RotationH) // Si je veux trouner dans le sens anti-horaire et qu'une rotation est pas en cours
 			if (PersoRangee () || rotantikub) //Si le perso est dans la rangée ou qu'il y a un antikub dans la rangée, je clignote et ne tourne pas
 				cligne = true;
-			else
-				RotationAH = true;
+				else
+					RotationAH = true;
+		}
 	}
 
 	bool PersoRangee () //Méthode pour déterminer si le perso est dans la rangée que le joueur veut faire pivoter
@@ -286,7 +347,7 @@ public class Cube_Rotations : MonoBehaviour
 			if (Mathf.RoundToInt (Perso.transform.position.x) == rangeex) //Si le perso est dans la rangee
 				return true;
 		if (rangee == "y")  //Je tourne les cubes en y
-			if (Mathf.RoundToInt (Perso.transform.position.y) == rangeey) //Si le perso est dans la rangee
+			if ((Mathf.RoundToInt (Perso.transform.position.y) == rangeey) || (Mathf.RoundToInt (Perso.transform.position.y) - 1 == rangeey)) //Si le perso est dans la rangee ou juste au dessus d'elle
 				return true;
 		if (rangee == "z")  //Je tourne les cubes en z
 			if (Mathf.RoundToInt (Perso.transform.position.z) == rangeez) //Si le perso est dans la rangee
@@ -298,17 +359,15 @@ public class Cube_Rotations : MonoBehaviour
 	{
 		if (cligne)
 		{
-			string clignoterbit = clignoter.ToString ();
-
 			foreach (GameObject kub in cubesrot) //Pour tous les kubs qui devraient être pivotés
 			{
-				if ((int)clignoterbit [2] == 0) //Toutes les 4 frames je change la couleur
+				if (PointBit (clignoter, false, 4) == 0) //Toutes les 8 frames je change la couleur
 				ColorBlock (kub, Color.white);
 				else
 					ColorBlock (kub, lacouleur);
 			}
 
-			if (clignoter < 24) //Je fais clignoter 6 fois
+			if (clignoter < 40) //Je fais clignoter 6 fois
 			clignoter++;
 			else //Au bout de 6 fois j'arrête de clignoter
 			{
@@ -345,23 +404,24 @@ public class Cube_Rotations : MonoBehaviour
 
 		if (rangee == "x") //Axe de rotation pour une rotation en largeur
 		{	
-			sensrot = (2 * PointBit (pointfinal, true)) - 1; //Pour déterminer le sens de rotation hors hauteur	
-			axerot = new Vector3 (0, 0, sensrot);
+			sensrot = (2 * PointBit (pointfinal, false, 2)) - 1; //Pour déterminer le sens de rotation hors hauteur
+			axerot = new Vector3 (sensrot, 0, 0);
 		}
 		if (rangee == "y")  //Axe de rotation pour une rotation en hauteur
 			axerot = Vector3.up;
 
 		if (rangee == "z")  //Axe de rotation pour une rotation en longueur
 		{	
-			sensrot = (2 * PointBit (pointfinal, false)) - 1; //Pour déterminer le sens de rotation hors hauteur	
-			axerot = new Vector3 (sensrot, 0, 0);
+			sensrot = (2 * PointBit (pointfinal, true, 2)) - 1; //Pour déterminer le sens de rotation hors hauteur	
+			axerot = new Vector3 (0, 0, sensrot);
 		}
+
 		return axerot;
 	}
 
 	void RotateCubes () //La méthode pour faire tourner les cubes
 	{
-		if (RotationH || RotationAH) //Si une rotation est lancée
+		if (RotationOn ()) //Si une rotation est lancée
 		{
 			int sensrot = 0; //Pour calculer le sens de la rotation
 
@@ -392,22 +452,33 @@ public class Cube_Rotations : MonoBehaviour
 		}
 	}
 
+	public bool RotationOn () //Méthode pour tester si une rotation est en cours
+	{
+		if (RotationH || RotationAH)
+			return true;
+		else
+			return false;
+	}
+
 	void Update ()
 	{
 		pointfinal = Camera.main.GetComponent<Ubik_Camera_Smooth> ().GetCamNumber (); //Récupération de l'état de la caméra
 
 		ResetKubsColor ();
 
-		InputPrepareRotation (); //Je récupère les inputs du choix de la dimension sélectionnée (x,y,z)
-		InputRangee (); //Je récupère les inputs du choix de la rangée
-		InputRotation (); //Je récupère les inputs de détermination de la rotation
+		if (!RotationH && !RotationAH) //J'attends toujours qu'une rotation soit finie pour recevoir de nouveaux inputs
+		{
+			InputPrepareRotation (); //Je récupère les inputs du choix de la dimension sélectionnée (x,y,z)
+			InputRangee (); //Je récupère les inputs du choix de la rangée
+			InputRotation (); //Je récupère les inputs de détermination de la rotation
 
-		SetRangee (); //Je détermine quelle rangée est effectivement sélectionnée par le joueur
-		SelectCubes (); //Je surligne les cubes de la bonne couleur et les déclarent comme sélectionnés et prêts à tourner
+			SetRangee (); //Je détermine quelle rangée est effectivement sélectionnée par le joueur
+			SelectCubes (); //Je surligne les cubes de la bonne couleur et les déclarent comme sélectionnés et prêts à tourner
 
-		ChangeRangee (); //Je change de rangée si le joueur a fait l'input pour
+			ChangeRangee (); //Je change de rangée si le joueur a fait l'input pour
 
-		Clignoter (); //Je clignote si besoin est
+			Clignoter (); //Je clignote si besoin est
+		}
 
 		RotateCubes (); //Je fais la rotation des cubes
 	}

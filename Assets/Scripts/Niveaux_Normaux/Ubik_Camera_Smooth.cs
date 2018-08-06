@@ -79,13 +79,13 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	void GetInputRotation ()
 	{
 		//jJe détermine à quel point est la caméra selon la rotation
-		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && Perso.GetComponent<Cube_Rotations>().IsNotRotating ()) {
+		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && !Perso.GetComponent<Cube_Rotations>().RotationReady ()) {
 			timer = 0;
 			rotationH = true;
 			ChangeCameraPos (1);
 		}
 
-		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && Perso.GetComponent<Cube_Rotations>().IsNotRotating ()) {
+		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && !Perso.GetComponent<Cube_Rotations>().RotationReady ()) {
 			timer = 0;
 			rotationAH = true;
 			ChangeCameraPos (-1);
