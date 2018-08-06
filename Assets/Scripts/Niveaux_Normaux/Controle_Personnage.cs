@@ -512,31 +512,32 @@ public class Controle_Personnage : MonoBehaviour
 		Kubinfos = GetComponent<Cube_Rotations> ();
 	}
 
-	// Update is called once per frame
-	void Update ()
+	void LateUpdate () //Je fais l'update en dernière à cause du nettoyage de la couleur des cubes et que je sais pas programmer proprement
 	{
-		//Si je suis pas en train de préparer une rotation
-		if (!Kubinfos.RotationReady ())
+		if (this.GetComponent<Can_Act> ().canact) //J'attends que l'UI de fade soit passé pour permettre au joueur de faire des trucs
 		{
-			Reset ();
-			Kubinfos.ResetKubsColor ();
-
-			if (!Kubinfos.RotationOn ()) //Je ne reçois les inputs que si aucune rotation n'est en cours
+			//Si je suis pas en train de préparer une rotation
+			if (!Kubinfos.RotationReady ())
 			{
-				MoveInput ();
+				Reset ();
+
+				if (!Kubinfos.RotationOn ()) //Je ne reçois les inputs que si aucune rotation n'est en cours
+				{
+					MoveInput ();
+				}
+
+				Regard ();
+				MoveChecker ();
+				Move ();
+
+				Jump ();
+				Equilibrium ();
+				Falling ();
+
+				Wait ();
+
+				//Debug.Log ("Falling " + enchute + " Jumping " + ensaut + " Equilibrium " + equilibre);
 			}
-
-			Regard ();
-			MoveChecker ();
-			Move ();
-
-			Jump ();
-			Equilibrium ();
-			Falling ();
-
-			Wait ();
-
-			//Debug.Log ("Falling " + enchute + " Jumping " + ensaut + " Equilibrium " + equilibre);
 		}
 	}
 }

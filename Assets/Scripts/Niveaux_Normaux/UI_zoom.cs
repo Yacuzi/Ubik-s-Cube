@@ -3,19 +3,11 @@ using System.Collections;
 
 public class UI_zoom : MonoBehaviour
 {
-
 	private bool zoom = false;
-
-	// Use this for initialization
-	void Start ()
-	{
-	
-	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-
 		//je vérifie s'il y a un zoom
 		zoom = Camera.main.GetComponent<Ubik_Camera_Smooth> ().vuesecondaire;
 
@@ -23,7 +15,6 @@ public class UI_zoom : MonoBehaviour
 		if (zoom)
 			GetComponent<Canvas> ().enabled = false;
 		else
-			GetComponent<Canvas> ().enabled = true;
-	
+			GetComponent<Canvas> ().enabled = true;	
 	}
 }

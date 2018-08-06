@@ -20,7 +20,7 @@ public class Ouverture_Porte : MonoBehaviour {
 	void Update () {
 	
 				//je vérifie si la sphère a été prise
-				sesame = sphere.GetComponent<sphere_collectible> ().recupere;
+				sesame = sphere.GetComponent<Sphere_collectible> ().recupere;
 
 				if (sesame)
 						transform.position = Vector3.Lerp (transform.position, ouvert, timer * Time.deltaTime);

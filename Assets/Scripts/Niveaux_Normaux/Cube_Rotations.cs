@@ -6,6 +6,7 @@ using UnityEngine.Scripting;
 public class Cube_Rotations : MonoBehaviour
 {
 	public float speedrot;
+	public bool Rotation_Largeur, Rotation_Hauteur, Rotation_Longueur;
 
 	[HideInInspector]
 	public bool Larg, Haut, Long;
@@ -53,7 +54,7 @@ public class Cube_Rotations : MonoBehaviour
 		if (lekub.tag == "Verriere") //Si c'est un morceau de verriere je change l'alpha
 			lacouleur.a = lekub.GetComponent<Renderer> ().material.color.a;
 		else
-			lacouleur.a = 0.5f;
+			lacouleur.a = 0f;
 
 		if (lekub.GetComponent<Renderer> ())
 		{
@@ -71,7 +72,7 @@ public class Cube_Rotations : MonoBehaviour
 			if (lekub.tag == "Verriere") //Je laisse la verriere transparente
 				lacouleur.a = lekub.GetComponent<Renderer> ().material.color.a;
 			else
-				lacouleur.a = 0.5f;
+				lacouleur.a = 0f;
 			
 			ColorBlock (lekub, lacouleur);
 		}
@@ -107,9 +108,12 @@ public class Cube_Rotations : MonoBehaviour
 	{
 		if (Perso.Immobile ()) //Si le perso a fini toutes ses actions je peux sélectionner quelquechose
 		{
-			Larg = Input.GetButton ("Largeur");
-			Haut = Input.GetButton ("Hauteur");
-			Long = Input.GetButton ("Longueur");
+			if (Rotation_Largeur) //Je récupère les inputs en précisant bien que je le fais seulement si j'ai le droit dans ce niveau
+				Larg = Input.GetButton ("Largeur");
+			if (Rotation_Hauteur)
+				Haut = Input.GetButton ("Hauteur");
+			if (Rotation_Longueur)
+				Long = Input.GetButton ("Longueur");
 
 			if (!(Larg ^ Haut ^ Long) || (Larg && Haut && Long)) //Si j'appuie sur deux boutons en même temps
 			{
@@ -462,24 +466,27 @@ public class Cube_Rotations : MonoBehaviour
 
 	void Update ()
 	{
-		pointfinal = Camera.main.GetComponent<Ubik_Camera_Smooth> ().GetCamNumber (); //Récupération de l'état de la caméra
-
-		ResetKubsColor ();
-
-		if (!RotationH && !RotationAH) //J'attends toujours qu'une rotation soit finie pour recevoir de nouveaux inputs
+		if (this.GetComponent<Can_Act> ().canact) //J'attends que l'UI de fade soit passé pour permettre au joueur de faire des trucs
 		{
-			InputPrepareRotation (); //Je récupère les inputs du choix de la dimension sélectionnée (x,y,z)
-			InputRangee (); //Je récupère les inputs du choix de la rangée
-			InputRotation (); //Je récupère les inputs de détermination de la rotation
+			pointfinal = Camera.main.GetComponent<Ubik_Camera_Smooth> ().GetCamNumber (); //Récupération de l'état de la caméra
 
-			SetRangee (); //Je détermine quelle rangée est effectivement sélectionnée par le joueur
-			SelectCubes (); //Je surligne les cubes de la bonne couleur et les déclarent comme sélectionnés et prêts à tourner
+			ResetKubsColor ();
 
-			ChangeRangee (); //Je change de rangée si le joueur a fait l'input pour
+			if (!RotationH && !RotationAH) //J'attends toujours qu'une rotation soit finie pour recevoir de nouveaux inputs
+			{
+				InputPrepareRotation (); //Je récupère les inputs du choix de la dimension sélectionnée (x,y,z)
+				InputRangee (); //Je récupère les inputs du choix de la rangée
+				InputRotation (); //Je récupère les inputs de détermination de la rotation
 
-			Clignoter (); //Je clignote si besoin est
+				SetRangee (); //Je détermine quelle rangée est effectivement sélectionnée par le joueur
+				SelectCubes (); //Je surligne les cubes de la bonne couleur et les déclarent comme sélectionnés et prêts à tourner
+
+				ChangeRangee (); //Je change de rangée si le joueur a fait l'input pour
+
+				Clignoter (); //Je clignote si besoin est
+			}
+
+			RotateCubes (); //Je fais la rotation des cubes
 		}
-
-		RotateCubes (); //Je fais la rotation des cubes
 	}
 }
