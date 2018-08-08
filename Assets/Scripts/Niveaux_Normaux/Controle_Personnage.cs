@@ -13,16 +13,16 @@ public class Controle_Personnage : MonoBehaviour
 	[HideInInspector]
 	public int pretbouger;
 
-	private GameObject God;
-	private Cube_Rotations Kubinfos;
-	private Vector3 direquil, nextcase;
-	private float angletot, angletotbalance;
-	private bool wait, moving, rotjump;
-	private float waittime;
-	private Transform kubobstacle, kubsaut, kubsupport;
+	protected GameObject God;
+	protected Cube_Rotations Kubinfos;
+	protected Vector3 direquil, nextcase, possave;
+	protected float angletot, angletotbalance;
+	protected bool wait, moving, rotjump;
+	protected float waittime;
+	protected Transform kubobstacle, kubsaut, kubsupport;
 
 	//Je récupère le déplacement voulu du joueur
-	void MoveInput ()
+	protected void MoveInput ()
 	{
 		//Je réinitialise le fait qu'une seule direction soit utilisée
 		bool onedirection = false;
@@ -70,7 +70,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Fonction pour voir si c'est un kub surlequel on peut sauter
-	bool Jumpable ()
+	protected virtual bool Jumpable ()
 	{
 		if ((kubobstacle.transform.tag != "Cube") && (kubobstacle.transform.tag != "Verriere"))
 			return true;
@@ -79,7 +79,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Fonction pour voir si le saut du joueur sera empêché
-	bool CanJump ()
+	protected bool CanJump ()
 	{
 		//Je dis que le joueur peut peut-être sauter sur ce kub
 		kubsaut = kubobstacle;
@@ -123,7 +123,7 @@ public class Controle_Personnage : MonoBehaviour
 		return true;
 	}
 
-	void InputJump ()
+	protected void InputJump ()
 	{		
 		if ((Input.GetButtonUp ("Saut")) && (!pousse))
 		{
@@ -132,22 +132,29 @@ public class Controle_Personnage : MonoBehaviour
 		}
 	}
 
-	void Jump ()
+	protected void SavePos () //Pour sauvgarder la position du perso
+	{
+		if (Immobile())
+			possave = transform.position;
+	}
+
+	protected void Jump ()
 	{
 		if (ensaut)
 		{
-			int lekubsautx = Mathf.RoundToInt (kubsaut.position.x);
-			int lekubsauty = Mathf.RoundToInt (kubsaut.position.y);
-			int lekubsautz = Mathf.RoundToInt (kubsaut.position.z);
+			//Position arrondie à l'entier du perso
+			int persox = Mathf.RoundToInt (possave.x);
+			int persoy = Mathf.RoundToInt (possave.y);
+			int persoz = Mathf.RoundToInt (possave.z);
 
 			if (!rotjump) //Je fais le petit saut d'abord
 			{				
 				Vector3 petitsaut = Vector3.zero;
 
 				//Je choisis la destination pour que le kub fasse un petit saut pour atteindre le bord du bloc
-				float petitsautx = lekubsautx - (direction.x * 0.5f * (kubsaut.lossyScale.x + transform.localScale.x));
-				float petitsauty = lekubsauty + (0.5f * (kubsaut.lossyScale.y - transform.localScale.y));
-				float petitsautz = lekubsautz - (direction.z * 0.5f * (kubsaut.lossyScale.z + transform.localScale.z));
+				float petitsautx = persox + (direction.x * 0.5f * (kubsaut.lossyScale.x - transform.localScale.x));
+				float petitsauty = persoy + (0.5f * (kubsaut.lossyScale.y - transform.localScale.y));
+				float petitsautz = persoz + (direction.z * 0.5f * (kubsaut.lossyScale.z - transform.localScale.z));
 				petitsaut = new Vector3 (petitsautx, petitsauty, petitsautz);
 
 				//Je fais le petit saut de préparation
@@ -161,7 +168,7 @@ public class Controle_Personnage : MonoBehaviour
 			if (rotjump)
 			{
 				//Je trouve le point de rotation
-				Vector3 rotsaut = new Vector3 (lekubsautx - (direction.x * 0.5F * kubsaut.lossyScale.x), kubsaut.position.y + (0.5F * kubsaut.lossyScale.y), lekubsautz - (direction.z * 0.5F * kubsaut.lossyScale.y));
+				Vector3 rotsaut = new Vector3 (persox + (direction.x * 0.5F), persoy + 0.5F, persoz + (direction.z * 0.5F));
 				//Je trouve l'axe
 				Vector3 axesaut = Vector3.Cross (direction, Vector3.down);
 
@@ -190,7 +197,7 @@ public class Controle_Personnage : MonoBehaviour
 		}
 	}
 
-	void Wait ()
+	protected void Wait ()
 	{
 		if (wait)
 		{
@@ -204,7 +211,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Je met à jour le sens dans lequel le joueur veut aller
-	void Regard ()
+	protected void Regard ()
 	{
 		if (!moving && !enchute && !ensaut)
 		{
@@ -227,7 +234,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//La fonction pour bouger le personnage
-	void Move ()
+	protected void Move ()
 	{
 		if (moving)
 		{
@@ -241,8 +248,13 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//La fonction pour faire l'effet de déséquilibre du perso quand il est au bord d'un kub
-	void Equilibrium ()
+	protected void Equilibrium ()
 	{
+		//Position arrondie à l'entier du perso
+		int persox = Mathf.RoundToInt (possave.x);
+		int persoy = Mathf.RoundToInt (possave.y);
+		int persoz = Mathf.RoundToInt (possave.z);
+
 		//L'axe autour duquel va balancer le perso
 		Vector3 axechute;
 		//Si le joueur va vers le vide ou non
@@ -257,9 +269,9 @@ public class Controle_Personnage : MonoBehaviour
 			if (going && !balance)
 			{
 				//Je définis où est la position du perso pour qu'il soit bien au bord du kub
-				Vector3 bordkub = new Vector3 (kubsupport.transform.position.x + (direquil.x * 0.5f * (kubsupport.transform.lossyScale.x - transform.lossyScale.x)), 
-				                               kubsupport.transform.position.y + (0.5f * (kubsupport.transform.lossyScale.x + transform.lossyScale.x)), 
-				                               kubsupport.transform.position.z + (direquil.z * 0.5f * (kubsupport.transform.lossyScale.z - transform.lossyScale.z)));
+				Vector3 bordkub = new Vector3 (persox + (direquil.x * 0.5f * (kubsupport.transform.lossyScale.x - transform.lossyScale.x)), 
+				                               persoy - (0.5f * (kubsupport.transform.lossyScale.y - transform.lossyScale.y)), 
+				                               persoz + (direquil.z * 0.5f * (kubsupport.transform.lossyScale.z - transform.lossyScale.z)));
 				
 				//Je bouge le personnage vers cette position
 				if (MoveTowards (bordkub, vitpetit))
@@ -279,9 +291,9 @@ public class Controle_Personnage : MonoBehaviour
 			if (balance)
 			{
 				//Je définis le point autour duquel le perso va tourner
-				float pchutex = kubsupport.position.x + (kubsupport.lossyScale.x * 0.5f * direquil.x);
-				float pchutey = kubsupport.position.y + (kubsupport.lossyScale.y * 0.5f);
-				float pchutez = kubsupport.position.z + (kubsupport.lossyScale.z * 0.5f * direquil.z);
+				float pchutex = persox + (0.5f * direquil.x);
+				float pchutey = persoy - 0.5f;
+				float pchutez = persoz + (0.5f * direquil.z);
 				Vector3 pchute = new Vector3 (pchutex, pchutey, pchutez);
 
 				//Définition de l'axe de rotation pour la chute
@@ -345,7 +357,7 @@ public class Controle_Personnage : MonoBehaviour
 		}
 	}
 
-	void Falling ()
+	protected void Falling ()
 	{
 		//Le perso est censer chuter
 		if (enchute)
@@ -368,7 +380,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//La fonction pour centrer le personnage sur son cube actuel
-	bool CenterCharacter ()
+	protected bool CenterCharacter ()
 	{
 		//Je récupère les coordonnées arrondies de la position du personnage
 		int centerx = Mathf.RoundToInt (transform.position.x);
@@ -384,7 +396,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//La fonction pour que ça bouge enfin comme je veux
-	bool MoveTowards (Vector3 objective, float speed)
+	protected bool MoveTowards (Vector3 objective, float speed)
 	{
 		if (Vector3.Distance (transform.position, objective) >= speed * Time.deltaTime)
 		{
@@ -399,7 +411,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Fonction pour récupérer le cube sur lequel est le joueur
-	bool GetKubAppui ()
+	protected bool GetKubAppui ()
 	{
 		//Le kub vers lequel le joueur veut aller
 		Vector3 kubfutur = transform.position + direction;
@@ -414,7 +426,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Fonction pour récupérer le cube sur lequel est le joueur
-	bool GetKubSupport ()
+	protected bool GetKubSupport ()
 	{
 		//Pour récupérer les informations sur un éventuel kub vers lequel va le joueur
 		RaycastHit hitkub;
@@ -430,7 +442,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Fonction pour récupérer le cube sur lequel est le joueur
-	bool GetKubObstacle ()
+	protected bool GetKubObstacle ()
 	{
 		//Pour récupérer les informations sur un éventuel kub vers lequel va le joueur
 		RaycastHit hitkub;
@@ -447,7 +459,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	//Fonction pour voir si le perso peut bouger et si oui, comment
-	void MoveChecker ()
+	protected void MoveChecker ()
 	{
 		//Si le joueur n'est pas en saut ou en chute ou en équilibre ou en mouvement
 		if (pretbouger == 0 && !ensaut && !enchute && !equilibre && !moving)
@@ -483,7 +495,7 @@ public class Controle_Personnage : MonoBehaviour
 		}
 	}
 
-	void Reset ()
+	protected void Reset ()
 	{
 		if (Input.GetButtonDown ("Reset"))
 		{
@@ -500,7 +512,7 @@ public class Controle_Personnage : MonoBehaviour
 	}
 
 	// Use this for initialization
-	void Start ()
+	protected void Start ()
 	{
 		//Je cache le curseur
 		Cursor.visible = false;
@@ -534,9 +546,8 @@ public class Controle_Personnage : MonoBehaviour
 				Equilibrium ();
 				Falling ();
 
+				SavePos ();
 				Wait ();
-
-				//Debug.Log ("Falling " + enchute + " Jumping " + ensaut + " Equilibrium " + equilibre);
 			}
 		}
 	}

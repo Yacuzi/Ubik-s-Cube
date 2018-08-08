@@ -19,6 +19,7 @@ public class Editeur_creation_cube : Editor {
 		}
 
 		if (GUILayout.Button ("Créer cube plein")) {
+			myScript.CreateEmptyCube ();
 			myScript.CreateFullCube ();
 		}
 	}

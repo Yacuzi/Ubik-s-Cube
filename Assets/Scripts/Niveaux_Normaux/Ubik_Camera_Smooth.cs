@@ -5,6 +5,9 @@ using UnityEngine.Scripting;
 public class Ubik_Camera_Smooth : MonoBehaviour
 {
 	public float smoothTime = 2F;
+	public float delayrotcam = 1f;
+	public bool CanRotate = true, CanZoom = true;
+
 	[HideInInspector]
 	public bool vuesecondaire;
 	[HideInInspector]
@@ -13,16 +16,14 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	public Vector3[] poscamsec = new Vector3[4];
 	[HideInInspector]
 	public int finpoin = 0;
-	public float delayrotcam = 1f;
 
-	private GameObject God, Perso;
-	private Vector3 velocity = Vector3.zero;
-	private bool rotationH, rotationAH;
-	private Vector3 finishpoint;
-	private Vector3 target;
-	private Vector3 cameraposprec;
-
-	private float timer;
+	protected GameObject God, Perso;
+	protected Vector3 velocity = Vector3.zero;
+	protected bool rotationH, rotationAH;
+	protected Vector3 finishpoint;
+	protected Vector3 target;
+	protected Vector3 cameraposprec;
+	protected float timer;
 
 	// Use this for initialization
 	void Start ()
@@ -61,7 +62,7 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	void Update ()
 	{
 		//J'incrémente le timer
-		MyTimer();
+		MyTimer ();
 
 		//J'adapte la caméra à la situation actuelle
 		OrthoSize ();
@@ -78,17 +79,22 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 
 	void GetInputRotation ()
 	{
-		//jJe détermine à quel point est la caméra selon la rotation
-		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && !Perso.GetComponent<Cube_Rotations>().RotationReady ()) {
-			timer = 0;
-			rotationH = true;
-			ChangeCameraPos (1);
-		}
+		if (CanRotate) //Si je permet à ma caméra de tourner
+		{
+			//jJe détermine à quel point est la caméra selon la rotation
+			if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && !Perso.GetComponent<Cube_Rotations> ().RotationReady ())
+			{
+				timer = 0;
+				rotationH = true;
+				ChangeCameraPos (1);
+			}
 
-		if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && !Perso.GetComponent<Cube_Rotations>().RotationReady ()) {
-			timer = 0;
-			rotationAH = true;
-			ChangeCameraPos (-1);
+			if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && !Perso.GetComponent<Cube_Rotations> ().RotationReady ())
+			{
+				timer = 0;
+				rotationAH = true;
+				ChangeCameraPos (-1);
+			}
 		}
 	}
 
@@ -102,7 +108,8 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	void CameraLookAt ()
 	{
 		//Je change le regard que si je fais un rotation
-		if (rotationAH || rotationH) {
+		if (rotationAH || rotationH)
+		{
 			//je regarde toujours dans la bonne direction
 			if (!vuesecondaire)
 				transform.LookAt (target);
@@ -122,7 +129,7 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 
 	public int GetCamNumber ()
 	{
-			return finpoin % 4;
+		return finpoin % 4;
 	}
 
 	//Pour déterminer l'orthographic size
@@ -138,7 +145,8 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		int largeur = God.GetComponent<CreationCube> ().Largeur;
 
 		//choix du "zoom" de la caméra
-		if (!vuesecondaire) {
+		if (!vuesecondaire)
+		{
 			if ((hauteur > longueur) || (hauteur > largeur))
 				orthosize = (hauteur + longueur + largeur) * 0.35F;
 			else
@@ -154,10 +162,14 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	//Pour faire la transition entre les vues
 	void ChangeVue ()
 	{
-		//transition de la vue secondaire à la vue principale
-		if (Input.GetButtonDown ("Vue") && CameraStable()) {
-			timer = 0;
-			vuesecondaire = !vuesecondaire;
+		if (CanZoom)
+		{
+			//transition de la vue secondaire à la vue principale
+			if (Input.GetButtonDown ("Vue") && CameraStable ())
+			{
+				timer = 0;
+				vuesecondaire = !vuesecondaire;
+			}
 		}
 	}
 
@@ -179,12 +191,15 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	//Pour déterminer où placer la caméra dans le contexte actuel
 	void CameraPos ()
 	{
-		if (!vuesecondaire) {
+		if (!vuesecondaire)
+		{
 
 			//Je détermine vers où doit aller la caméra
-			finishpoint = poscam[GetCamNumber ()];
+			finishpoint = poscam [GetCamNumber ()];
 
-		} else {
+		}
+		else
+		{
 			
 			//Je récupère la position du perso
 			float persox = Perso.transform.position.x;
@@ -205,7 +220,8 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		transform.position = Vector3.SmoothDamp (transform.position, finishpoint, ref velocity, smoothTime);
 
 		//Je réinitialise la caméra
-		if (CameraStable ()) {
+		if (CameraStable ())
+		{
 			rotationH = false;
 			rotationAH = false;
 		}

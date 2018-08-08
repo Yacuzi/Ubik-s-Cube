@@ -385,18 +385,23 @@ public class Cube_Rotations : MonoBehaviour
 	{
 		float anglerot = 0f;
 
-		if (rangee == "x" && hauteur != longueur) //Je détermine si les rotations sont de 90° ou 180° en fonction de la taille du cube			
-			anglerot = 180f;
-		else
-			anglerot = 90F;
-		if (rangee == "y" && largeur != longueur) //Je détermine si les rotations sont de 90° ou 180° en fonction de la taille du cube			
-			anglerot = 180f;
-		else
-			anglerot = 90F;
-		if (rangee == "z" && hauteur != largeur) //Je détermine si les rotations sont de 90° ou 180° en fonction de la taille du cube			
-			anglerot = 180f;
-		else
-			anglerot = 90F;
+		if (rangee == "x")
+			if (hauteur != longueur) //Je détermine si les rotations sont de 90° ou 180° en fonction de la taille du cube			
+				anglerot = 180f;
+			else
+				anglerot = 90f;
+		
+		if (rangee == "y")
+			if (largeur != longueur) //Je détermine si les rotations sont de 90° ou 180° en fonction de la taille du cube			
+				anglerot = 180f;
+			else
+				anglerot = 90f;
+		
+		if (rangee == "z")
+			if (hauteur != largeur) //Je détermine si les rotations sont de 90° ou 180° en fonction de la taille du cube			
+				anglerot = 180f;
+			else
+				anglerot = 90f;
 
 		return anglerot;
 	}
