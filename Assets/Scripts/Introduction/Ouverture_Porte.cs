@@ -4,10 +4,12 @@ using System.Collections;
 public class Ouverture_Porte : MonoBehaviour
 {
 	public GameObject sphere;
+	public float timer;
+
 	[HideInInspector]
 	public bool sesame, opened;
+
 	private Vector3 ouvert;
-	public float timer;
 
 	void Start ()
 	{
@@ -24,6 +26,9 @@ public class Ouverture_Porte : MonoBehaviour
 			transform.position = Vector3.Lerp (transform.position, ouvert, timer * Time.deltaTime);
 
 		if (Mathf.Abs (transform.position.y - ouvert.y) <= 0.45F)
+		{
+			GetComponent<BoxCollider>().enabled = false; //Je désactive le collider du cube
 			opened = true;
+		}
 	}
 }
