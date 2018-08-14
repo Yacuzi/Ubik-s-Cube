@@ -13,7 +13,6 @@ public class Cube_Rotations : MonoBehaviour
 	[HideInInspector]
 	public bool RotationH, RotationAH;
 
-	private Transform God;
 	private Controle_Personnage Perso;
 	private int pointfinal;
 
@@ -24,7 +23,7 @@ public class Cube_Rotations : MonoBehaviour
 	private int clignoter = 0;
 	private Vector3 centreRot;
 	private float angletot;
-	private bool goup, godown, goleft, goright, axisreleased;
+	private bool goup, godown, goleft, goright, gouphaut, godownhaut, axisreleased;
 	private bool cligne, rotantikub;
 	private string rangee;
 	private Color lacouleur;
@@ -33,20 +32,42 @@ public class Cube_Rotations : MonoBehaviour
 	{
 		SetKubs (); //Je définis le tableau des kubs
 
-		//Je récupère le perso et le god
-		God = GameObject.FindGameObjectWithTag ("God").transform;
+		//Je récupère le perso
 		Perso = GameObject.FindGameObjectWithTag ("Player").GetComponent<Controle_Personnage> ();
 
 		//Récupération de la taille du cube
-		hauteur = God.GetComponent<CreationCube> ().Hauteur;
-		longueur = God.GetComponent<CreationCube> ().Longueur;
-		largeur = God.GetComponent<CreationCube> ().Largeur;
+		largeur = Mathf.RoundToInt (GetCubeSize ().x);
+		hauteur = Mathf.RoundToInt (GetCubeSize ().y);
+		longueur = Mathf.RoundToInt (GetCubeSize ().z);
 
 		//Creation du point central pour les centre de rotation
-		float milx = (float)(((float)longueur / 2) - 0.5F);
+		float milx = (float)(((float)largeur / 2) - 0.5F);
 		float mily = (float)(((float)hauteur / 2) - 0.5F);
-		float milz = (float)(((float)largeur / 2) - 0.5F);
+		float milz = (float)(((float)longueur / 2) - 0.5F);
 		centreRot = new Vector3 (milx, mily, milz);
+	}
+
+	public Vector3 GetCubeSize () //Méthode pour récupérer la taille du niveau
+	{
+		GameObject[] Cube;
+		int x = 0, y = 0, z = 0;
+		Vector3 size;
+
+		Cube = GameObject.FindGameObjectsWithTag ("Cube"); //Je récupère tous les cubes du niveau
+
+		foreach (GameObject uncube in Cube) //Je récupère la plus grande coordonnée que je trouve à chaque fois
+		{
+			if (Mathf.RoundToInt (uncube.transform.position.x) + 1 > x)
+				x = Mathf.RoundToInt (uncube.transform.position.x) + 1;
+			if (Mathf.RoundToInt (uncube.transform.position.y) + 1 > y)
+				y = Mathf.RoundToInt (uncube.transform.position.y) + 1;
+			if (Mathf.RoundToInt (uncube.transform.position.z) + 1 > z)
+				z = Mathf.RoundToInt (uncube.transform.position.z) + 1;
+		}
+
+		size = new Vector3 (x, y, z);
+
+		return size;
 	}
 
 	public void ColorBlock (GameObject lekub, Color lacouleur) //La fonction pour colorier un bloc d'une certaine couleur
@@ -189,12 +210,12 @@ public class Cube_Rotations : MonoBehaviour
 				if (Larg)
 				{
 					rangee = "x";
-					lacouleur = Color.red;
+					lacouleur = Color.blue;
 				}
 				if (Long)
 				{
 					rangee = "z";
-					lacouleur = Color.blue;
+					lacouleur = Color.red;
 				}
 			}
 	}
@@ -240,29 +261,42 @@ public class Cube_Rotations : MonoBehaviour
 			godown = false;
 			goleft = false;
 			goright = false;
+			gouphaut = false;
+			godownhaut = false;
 
-			if (Input.GetAxisRaw ("VerticalJ") == 0) //Si je relache le stick de manette je peux à nouveau changer de direction			
+			if (Mathf.Abs (Input.GetAxisRaw ("VerticalJ")) <= 0.5f && Mathf.Abs (Input.GetAxisRaw ("HorizontalJ")) <= 0.5f) //Si je relache le stick de manette je peux à nouveau changer de direction			
 			axisreleased = true;
 		
-			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") == -1 && axisreleased))
+			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75 && axisreleased))
 			{
 				axisreleased = false;
 				goup = true;
 			}
-			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") == 1 && axisreleased))
+			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75 && axisreleased))
 			{
 				axisreleased = false;
 				godown = true;
 			}
-			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("HorizontalJ") == -1 && axisreleased))
+			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75 && axisreleased))
 			{
 				axisreleased = false;
 				goleft = true;
 			}
-			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("HorizontalJ") == 1 && axisreleased))
+			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75 && axisreleased))
 			{
 				axisreleased = false;
 				goright = true;
+			}
+
+			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && axisreleased)) //Je m'ocuppe du cas particulier de la hauteur
+			{
+				axisreleased = false;
+				gouphaut = true;
+			}
+			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && axisreleased))
+			{
+				axisreleased = false;
+				godownhaut = true;
 			}
 		}
 	}
@@ -297,30 +331,40 @@ public class Cube_Rotations : MonoBehaviour
 	{
 		if (rangee == "y") //Si je sélectionne la hauteur, la caméra ne change rien, c'est trop facile
 		{
-			if (goup && rangeey < hauteur - 1) //Je je veux aller vers le haut et que je suis pas déjà tout en haut
+			if (gouphaut && rangeey < hauteur - 1) //Je je veux aller vers le haut et que je suis pas déjà tout en haut
 				rangeey++;
-			if (godown && rangeey > 0) //Je je veux aller vers le bas et que je suis pas déjà tout en bas
+			if (godownhaut && rangeey > 0) //Je je veux aller vers le bas et que je suis pas déjà tout en bas
 				rangeey--;
 		}
 
-		if (rangee == "x") //Si je sélectionne la largeur, la caméra change des trucs, c'est moins sympa mais ça se fait
+		if (rangee == "x") //Si je sélectionne la largeur (rouge), la caméra change des trucs, c'est moins sympa mais ça se fait
 		{
 			if (goleft)
 				rangeex += (2 * PointBit (pointfinal, true, 2)) - 1;
 			if (goright)
 				rangeex -= (2 * PointBit (pointfinal, true, 2)) - 1;
+			if (goup)
+				rangeex -= (2 * PointBit (pointfinal, false, 2)) - 1;
+			if (godown)
+				rangeex += (2 * PointBit (pointfinal, false, 2)) - 1;
+			
 			if (rangeex < 0) //Je corrige si besoin est
 				rangeex = 0;
 			if (rangeex > largeur - 1)
 				rangeex = largeur - 1;
 		}
-		if (rangee == "z") //Si je sélectionne la longueur, la caméra change des trucs, c'est moins sympa mais ça se fait
+		if (rangee == "z") //Si je sélectionne la longueur (bleue), la caméra change des trucs, c'est moins sympa mais ça se fait
 		{
 			
 			if (goleft)
 				rangeez -= (2 * PointBit (pointfinal, false, 2)) - 1;
 			if (goright)
 				rangeez += (2 * PointBit (pointfinal, false, 2)) - 1;
+			if (goup)
+				rangeez -= (2 * PointBit (pointfinal, true, 2)) - 1;
+			if (godown)
+				rangeez += (2 * PointBit (pointfinal, true, 2)) - 1;
+			
 			if (rangeez < 0) //Je corrige si besoin est
 				rangeez = 0;
 			if (rangeez > longueur - 1)

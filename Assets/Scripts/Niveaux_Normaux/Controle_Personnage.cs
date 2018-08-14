@@ -12,6 +12,8 @@ public class Controle_Personnage : MonoBehaviour
 	public Vector3 directiontemp, direction, possaut;
 	[HideInInspector]
 	public int pretbouger;
+	[HideInInspector]
+	public static bool XBox360;
 
 	protected GameObject God;
 	protected Cube_Rotations Kubinfos;
@@ -20,20 +22,33 @@ public class Controle_Personnage : MonoBehaviour
 	protected bool wait, moving, rotjump;
 	protected float waittime;
 	protected Transform kubobstacle, kubsaut, kubsupport;
+	protected int hauteur;
+
+	void DetectController () //La méthode pour détecter si le joueur utilise une manette de XBox ou le clavier
+	{
+		string[] alljoysticks;
+
+		alljoysticks = Input.GetJoystickNames ();
+
+		if (alljoysticks [0] != "")
+			XBox360 = true;
+		else
+			XBox360 = false;
+	}
 
 	//Je récupère le déplacement voulu du joueur
 	protected void MoveInput ()
 	{
 		//Je réinitialise le fait qu'une seule direction soit utilisée
 		bool onedirection = false;
-
+		
 		//récupération des touches
-		if ((Input.GetButton ("Haut") && !wait) || (Input.GetAxisRaw ("VerticalJ") == -1))
+		if ((Input.GetButton ("Haut") && !wait) || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75))
 		{			
 			onedirection = true;
 			directiontemp = Vector3.right;
 		}
-		else if ((Input.GetButton ("Bas") && !wait) || (Input.GetAxisRaw ("VerticalJ") == 1))
+		else if ((Input.GetButton ("Bas") && !wait) || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75))
 			{			
 				if (onedirection)
 				{
@@ -43,7 +58,7 @@ public class Controle_Personnage : MonoBehaviour
 				onedirection = true;
 				directiontemp = Vector3.left;
 			}
-			else if ((Input.GetButton ("Gauche") && !wait) || (Input.GetAxisRaw ("HorizontalJ") == -1))
+			else if ((Input.GetButton ("Gauche") && !wait) || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75))
 				{			
 					if (onedirection)
 					{
@@ -53,7 +68,7 @@ public class Controle_Personnage : MonoBehaviour
 					onedirection = true;
 					directiontemp = Vector3.forward;
 				}
-				else if ((Input.GetButton ("Droite") && !wait) || (Input.GetAxisRaw ("HorizontalJ") == 1))
+				else if ((Input.GetButton ("Droite") && !wait) || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75))
 					{			
 						if (onedirection)
 						{
@@ -114,7 +129,7 @@ public class Controle_Personnage : MonoBehaviour
 				else if ((kubtesty - 1F == persoy) && (kubtestx == persox) && (kubtestz == persoz))
 				//S'il y a un kub au-dessus du joueur
 					return false;
-					else if (persoy + 1F == God.GetComponent<CreationCube> ().Hauteur)
+				else if (persoy + 1F == hauteur)
 				//Si le joueur est au plus haut du niveau
 						return false;
 			}
@@ -134,7 +149,7 @@ public class Controle_Personnage : MonoBehaviour
 
 	protected void SavePos () //Pour sauvgarder la position du perso
 	{
-		if (Immobile())
+		if (Immobile ())
 			possave = transform.position;
 	}
 
@@ -158,7 +173,7 @@ public class Controle_Personnage : MonoBehaviour
 				petitsaut = new Vector3 (petitsautx, petitsauty, petitsautz);
 
 				//Je fais le petit saut de préparation
-				if (MoveTowards (petitsaut, vitpetit))
+				if (MoveTowards (petitsaut, vitpetit, false))
 				{
 					rotjump = true;
 				}
@@ -213,6 +228,10 @@ public class Controle_Personnage : MonoBehaviour
 	//Je met à jour le sens dans lequel le joueur veut aller
 	protected void Regard ()
 	{
+		float persox = Mathf.RoundToInt (transform.position.x);
+		float persoz = Mathf.RoundToInt (transform.position.z);
+		Vector3 roundperso = new Vector3 (persox, transform.position.y, persoz);
+
 		if (!moving && !enchute && !ensaut)
 		{
 			//Le vecteur de déplacement temporaire
@@ -229,7 +248,7 @@ public class Controle_Personnage : MonoBehaviour
 			//Je met à jour ma direction
 			direction = deplacetemp;
 			//Je lui dis quelle est la position où le joueur voudrait aller
-			nextcase = transform.position + direction;
+			nextcase = roundperso + direction;
 		}
 	}
 
@@ -238,12 +257,22 @@ public class Controle_Personnage : MonoBehaviour
 	{
 		if (moving)
 		{
-			//Je fais bouger le personnage d'une case dans le sens désiré
-			if (MoveTowards (nextcase, vitesse))
+			if (directiontemp != Vector3.zero) //Si le joueur appuie sur une touche de déplacement
 			{
-				//Je dis que le perso n'est plus en train de bouger
-				moving = false;
+				//Je fais bouger le personnage d'une case dans le sens désiré de manière fluide
+				if (MoveTowards (nextcase, vitesse, true))
+				{
+					//Je dis que le perso n'est plus en train de bouger
+					moving = false;
+				}
 			}
+			else
+				//Je fais bouger le personnage d'une case dans le sens désiré avec précision
+				if (MoveTowards (nextcase, vitesse, false))
+				{
+					//Je dis que le perso n'est plus en train de bouger
+					moving = false;
+				}				
 		}
 	}
 
@@ -274,7 +303,7 @@ public class Controle_Personnage : MonoBehaviour
 				                               persoz + (direquil.z * 0.5f * (kubsupport.transform.lossyScale.z - transform.lossyScale.z)));
 				
 				//Je bouge le personnage vers cette position
-				if (MoveTowards (bordkub, vitpetit))
+				if (MoveTowards (bordkub, vitpetit, false))
 				{
 					//Une fois qu'il y est je lui dit qu'il se balance
 					balance = true;
@@ -389,25 +418,30 @@ public class Controle_Personnage : MonoBehaviour
 		Vector3 center = new Vector3 (centerx, centery, centerz);
 
 		//Je le déplace vers cette position
-		if (MoveTowards (center, vitpetit))
+		if (MoveTowards (center, vitpetit, false))
 			return true;
 		else
 			return false;
 	}
 
 	//La fonction pour que ça bouge enfin comme je veux
-	protected bool MoveTowards (Vector3 objective, float speed)
+	protected bool MoveTowards (Vector3 objective, float speed, bool smoothing)
 	{
 		if (Vector3.Distance (transform.position, objective) >= speed * Time.deltaTime)
 		{
 			transform.position += Vector3.Normalize (objective - transform.position) * speed * Time.deltaTime;
 			return false;
 		}
-		else
-		{
-			transform.position = objective;
-			return true;
-		}
+		else if (!smoothing)
+			{
+				transform.position = objective;
+				return true;
+			}
+			else
+			{
+				transform.position += Vector3.Normalize (objective - transform.position) * speed * Time.deltaTime;
+				return true;
+			}
 	}
 
 	//Fonction pour récupérer le cube sur lequel est le joueur
@@ -522,10 +556,14 @@ public class Controle_Personnage : MonoBehaviour
 		nextcase = transform.position;
 		//Je déclare d'où je récupère les infos et méthodes sur les kubs
 		Kubinfos = GetComponent<Cube_Rotations> ();
+		//Je récupère la hauteur du cube
+		hauteur = Mathf.RoundToInt(GetComponent<Cube_Rotations>().GetCubeSize().y);
 	}
 
 	void LateUpdate () //Je fais l'update en dernière à cause du nettoyage de la couleur des cubes et que je sais pas programmer proprement
 	{
+		DetectController (); //Je détecte si le joueur utilise une manette ou le clavier + souris
+
 		if (this.GetComponent<Can_Act> ().canact) //J'attends que l'UI de fade soit passé pour permettre au joueur de faire des trucs
 		{
 			//Si je suis pas en train de préparer une rotation

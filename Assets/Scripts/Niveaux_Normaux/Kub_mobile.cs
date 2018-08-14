@@ -16,7 +16,10 @@ public class Kub_mobile : MonoBehaviour
 	void Start ()
 	{
 		//je récupère le tableau des kubs
-		allcubes = Perso.GetComponent<Cube_Rotations> ().GetKubs ();	
+		allcubes = Perso.GetComponent<Cube_Rotations> ().GetKubs ();
+		//je récupère les données liées au niveau
+		largeur = Mathf.RoundToInt(Perso.GetComponent<Cube_Rotations>().GetCubeSize().x);
+		longueur = Mathf.RoundToInt(Perso.GetComponent<Cube_Rotations>().GetCubeSize().z);
 	}
 	
 	void Update ()
@@ -26,9 +29,6 @@ public class Kub_mobile : MonoBehaviour
 		direction = Perso.GetComponent<Controle_Personnage> ().direction;
 		regard = Perso.GetComponent<Controle_Personnage> ().direction;
 
-		//je récupère les données liées au niveau
-		largeur = God.GetComponent<CreationCube> ().Largeur;
-		longueur = God.GetComponent<CreationCube> ().Longueur;
 
 		//je vérifie s'il y a une rotation
 		if ((Camera.main.GetComponent<Cube_Rotations> ().Haut)

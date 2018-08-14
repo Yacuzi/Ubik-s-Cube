@@ -24,6 +24,7 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	protected Vector3 target;
 	protected Vector3 cameraposprec;
 	protected float timer;
+	protected int largeur, hauteur, longueur;
 
 	// Use this for initialization
 	void Start ()
@@ -36,14 +37,14 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		God = GameObject.FindGameObjectWithTag ("God");
 
 		//Récupérer le milieu et la taille depuis Cube_Creation
-		int hauteur = God.GetComponent<CreationCube> ().Hauteur;
-		int longueur = God.GetComponent<CreationCube> ().Longueur;
-		int largeur = God.GetComponent<CreationCube> ().Largeur;
+		largeur = Mathf.RoundToInt (Perso.GetComponent<Cube_Rotations> ().GetCubeSize ().x);
+		hauteur = Mathf.RoundToInt (Perso.GetComponent<Cube_Rotations> ().GetCubeSize ().y);
+		longueur = Mathf.RoundToInt (Perso.GetComponent<Cube_Rotations> ().GetCubeSize ().z);
 
 		//Creation du point central pour la caméra
-		float milx = (float)(((float)longueur / 2) - 0.5F);
+		float milx = (float)(((float)largeur / 2) - 0.5F);
 		float mily = (float)(((float)hauteur / 2) - 0.5F);
-		float milz = (float)(((float)largeur / 2) - 0.5F);
+		float milz = (float)(((float)longueur / 2) - 0.5F);
 		target = new Vector3 (milx, mily, milz);
 
 		//je définis la position de la caméra pour avoir le bon angle (qui fait des jeux de perspectives)
@@ -138,11 +139,6 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		//Ma variable de taille orthographique
 		float orthosize = 1.5f;
 		float vel = 0f;
-
-		//Récupérer le milieu et la taille depuis Cube_Creation
-		int hauteur = God.GetComponent<CreationCube> ().Hauteur;
-		int longueur = God.GetComponent<CreationCube> ().Longueur;
-		int largeur = God.GetComponent<CreationCube> ().Largeur;
 
 		//choix du "zoom" de la caméra
 		if (!vuesecondaire)

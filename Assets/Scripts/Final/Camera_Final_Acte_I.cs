@@ -29,7 +29,7 @@ public class Camera_Final_Acte_I : MonoBehaviour {
 				persoz = Perso.position.z;
 
 				//je récupère l'état du perso
-				saut = Perso.GetComponent<Controle_Personnage_Final_Acte_I> ().ensaut;
+				saut = Perso.GetComponent<Controle_Personnage> ().ensaut;
 
 				//je regarde si le joueur bouge après le plan compensé
 				if ((Input.anyKeyDown) & (fineffetdramatique))
