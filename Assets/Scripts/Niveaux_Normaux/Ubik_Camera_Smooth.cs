@@ -70,12 +70,15 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		CameraLookAt ();
 		CameraPos ();
 
-		//Je récupère les inputs du joueur
-		ChangeVue ();
-		GetInputRotation ();
+		if (Perso.GetComponent<Can_Act> ().canact) //J'attends que l'UI de fade soit passé pour permettre au joueur de faire des trucs
+		{
+			//Je récupère les inputs du joueur
+			ChangeVue ();
+			GetInputRotation ();
 
-		//Je sauvegarde l'ancienne position de la caméra
-		SaveCameraPosPrec ();
+			//Je sauvegarde l'ancienne position de la caméra
+			SaveCameraPosPrec ();
+		}
 	}
 
 	void GetInputRotation ()

@@ -84,9 +84,10 @@ public class Cube_Rotations : MonoBehaviour
 		}
 	}
 
-	public void ResetKubsColor () //Pour remettre tous les kubs en blanc
+	public void ResetKubsColor () //Pour colorier les kubs dans un dégradé de gris et le reste du cube en blanc
 	{
 		Color lacouleur = Color.white;
+		float degrade = 0;
 
 		foreach (GameObject lekub in allcubes)
 		{
@@ -94,6 +95,14 @@ public class Cube_Rotations : MonoBehaviour
 				lacouleur.a = lekub.GetComponent<Renderer> ().material.color.a;
 			else
 				lacouleur.a = 0f;
+
+			if (lekub.tag != "Verriere" && lekub.tag != "Cube") //Si c'est un kub
+			{
+				degrade = (lekub.transform.position.y + 1) / (float)hauteur; //Je détermine sa couleur fonction de sa hauteur
+				lacouleur = new Color (degrade, degrade, degrade); //J'assigne sa couleur
+			}
+			else
+				lacouleur = Color.white;
 			
 			ColorBlock (lekub, lacouleur);
 		}
@@ -515,11 +524,11 @@ public class Cube_Rotations : MonoBehaviour
 
 	void Update ()
 	{
+		ResetKubsColor (); //Je remet les cubes dans leur couleur d'origine fonction de leur hauteur
+
 		if (this.GetComponent<Can_Act> ().canact) //J'attends que l'UI de fade soit passé pour permettre au joueur de faire des trucs
 		{
 			pointfinal = Camera.main.GetComponent<Ubik_Camera_Smooth> ().GetCamNumber (); //Récupération de l'état de la caméra
-
-			ResetKubsColor ();
 
 			if (!RotationH && !RotationAH) //J'attends toujours qu'une rotation soit finie pour recevoir de nouveaux inputs
 			{
