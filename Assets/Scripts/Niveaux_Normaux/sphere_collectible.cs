@@ -8,6 +8,7 @@ public class Sphere_collectible : MonoBehaviour
 	private AudioClip cloche;
 	[HideInInspector]
 	public bool recupere;
+	private SaveQuit saveme;
 
 	void TurnAround () //animation de la sphère
 	{
@@ -22,6 +23,12 @@ public class Sphere_collectible : MonoBehaviour
 
 	void Start ()
 	{
+		saveme = Camera.main.GetComponent<SaveQuit> (); //Je récupère le composant de sauvegarde
+
+		if (saveme.GetSphere ())
+			this.gameObject.SetActive (false);
+
+		//J'initialise la sphère
 		posiniy = transform.position.y;
 		spherebeep = GetComponent<AudioSource> ();
 		cloche = spherebeep.clip;
@@ -40,8 +47,9 @@ public class Sphere_collectible : MonoBehaviour
 			if (!recupere)
 			{
 				recupere = true;
-				GetComponent<Renderer> ().enabled = false;
 				spherebeep.PlayOneShot (cloche);
+				saveme.SaveSphere ();
+				GetComponent<Renderer> ().enabled = false;
 			}
 	}
 }

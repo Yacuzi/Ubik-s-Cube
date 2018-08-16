@@ -100,6 +100,10 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 				ChangeCameraPos (-1);
 			}
 		}
+		else if (Input.GetButtonDown ("CameraH") || Input.GetButtonDown ("CameraAH")) //Si j'interdis la rotation de la caméra mais que le joueur essaye de la tourner
+			{
+				GameObject.Find ("No_Camera").GetComponent<CanvasRenderer> ().SetAlpha (1f);//J'affiche rapidement l'icône d'interdiction de rotation de la caméra
+			}
 	}
 
 	void MyTimer ()

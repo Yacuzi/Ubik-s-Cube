@@ -4,12 +4,18 @@ using System.Collections;
 public class Titre_UI_FadeOut : MonoBehaviour
 {
 	public float timer = 2F, speedalpha = 1f;
-	public bool CanActEnabler = true;
+	public bool CanActEnabler = true, HideMe;
 
 	[HideInInspector]
 	public bool ended;
 
 	private float temps, alpha = 1f;
+
+	void Start ()
+	{
+		if (HideMe)
+			GetComponent<CanvasRenderer> ().SetAlpha (0f);
+	}
 
 	void Update ()
 	{
@@ -18,12 +24,12 @@ public class Titre_UI_FadeOut : MonoBehaviour
 		else
 			ended = true; //J'ai fini de faire disparaitre mon texte
 
-		if (temps > timer && alpha > 0)
+		if (temps > timer && GetComponent<CanvasRenderer> ().GetAlpha() > 0)
 		{
 			if (CanActEnabler)
 				GameObject.FindGameObjectWithTag ("Player").GetComponent<Can_Act> ().canact = true; //Je dis au joueur qu'il peut maintenant agir
 			
-			alpha -= Time.deltaTime * speedalpha;
+			alpha = GetComponent<CanvasRenderer> ().GetAlpha() - (Time.deltaTime * speedalpha);
 			GetComponent<CanvasRenderer> ().SetAlpha (alpha);
 		}
 	}

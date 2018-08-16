@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class Sortie : MonoBehaviour
 {
-	public string niveausuivant;
-
 	private Controle_Personnage Perso;
 
 	bool CharacterFacing () //Si le perso est en face de la sortie comme il faut (pas en chute pas en saut)
@@ -47,10 +45,11 @@ public class Sortie : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{	
-		Shine ();
+		Shine (); //Je fais briller la sortie
 				
-		//Je charge le niveau suivant
-		if (Input.GetButtonDown ("Skip") || (CharacterFacing() && Input.GetButtonDown ("Saut")))
-			SceneManager.LoadSceneAsync (niveausuivant);
+		if ((Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.RightArrow)) || (CharacterFacing () && Input.GetButtonDown ("Saut"))) //Je charge le niveau suivant
+			SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
+		if (Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.LeftArrow))//Je charge le niveau précédent
+		    SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex - 1);
 	}
 }

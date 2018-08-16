@@ -77,7 +77,9 @@ public class Cube_Rotations : MonoBehaviour
 		else
 			lacouleur.a = 0f;
 
-		if (lekub.GetComponent<Renderer> ())
+		if (lekub.tag == "Player") //Si c'est le joueur, c'est son émission que je change
+			lekub.GetComponent<Renderer> ().material.SetColor("_EmissionColor",lacouleur);
+		else if (lekub.GetComponent<Renderer> ())
 		{
 			Renderer kubcolor = lekub.GetComponent<Renderer> (); //Je colorie le bloc si c'est pas un mur
 			kubcolor.material.color = lacouleur;
@@ -419,13 +421,26 @@ public class Cube_Rotations : MonoBehaviour
 			foreach (GameObject kub in cubesrot) //Pour tous les kubs qui devraient être pivotés
 			{
 				if (PointBit (clignoter, false, 4) == 0) //Toutes les 8 frames je change la couleur
-				ColorBlock (kub, Color.white);
+					ColorBlock (kub, Color.white);
 				else
 					ColorBlock (kub, lacouleur);
 			}
 
-			if (clignoter < 40) //Je fais clignoter 6 fois
-			clignoter++;
+			foreach (GameObject kub in verriererot) //Pour tous les kubs de la verrière qui devraient être pivotés
+			{
+				if (PointBit (clignoter, false, 4) == 0) //Toutes les 8 frames je change la couleur
+					ColorBlock (kub, Color.white);
+				else
+					ColorBlock (kub, lacouleur);
+			}
+
+			if (PointBit (clignoter, false, 4) == 0) //Toutes les 8 frames je change la couleur du perso
+				ColorBlock (Perso.gameObject, Color.white);
+			else
+				ColorBlock (Perso.gameObject, lacouleur);
+			
+			if (clignoter < 39) //Je fais clignoter 6 fois
+				clignoter++;
 			else //Au bout de 6 fois j'arrête de clignoter
 			{
 				clignoter = 0;
@@ -530,7 +545,7 @@ public class Cube_Rotations : MonoBehaviour
 		{
 			pointfinal = Camera.main.GetComponent<Ubik_Camera_Smooth> ().GetCamNumber (); //Récupération de l'état de la caméra
 
-			if (!RotationH && !RotationAH) //J'attends toujours qu'une rotation soit finie pour recevoir de nouveaux inputs
+			if (!RotationH && !RotationAH && !cligne) //J'attends toujours qu'une rotation soit finie et que le clignotement soit terminé pour recevoir de nouveaux inputs
 			{
 				InputPrepareRotation (); //Je récupère les inputs du choix de la dimension sélectionnée (x,y,z)
 				InputRangee (); //Je récupère les inputs du choix de la rangée
@@ -540,10 +555,9 @@ public class Cube_Rotations : MonoBehaviour
 				SelectCubes (); //Je surligne les cubes de la bonne couleur et les déclarent comme sélectionnés et prêts à tourner
 
 				ChangeRangee (); //Je change de rangée si le joueur a fait l'input pour
-
-				Clignoter (); //Je clignote si besoin est
 			}
 
+			Clignoter (); //Je clignote si besoin est
 			RotateCubes (); //Je fais la rotation des cubes
 		}
 	}
