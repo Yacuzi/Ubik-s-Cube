@@ -278,33 +278,33 @@ public class Cube_Rotations : MonoBehaviour
 			if (Mathf.Abs (Input.GetAxisRaw ("VerticalJ")) <= 0.5f && Mathf.Abs (Input.GetAxisRaw ("HorizontalJ")) <= 0.5f) //Si je relache le stick de manette je peux à nouveau changer de direction			
 			axisreleased = true;
 		
-			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75 && axisreleased))
+			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && Input.GetAxisRaw ("HorizontalJ") >= 0.6 && axisreleased))
 			{
 				axisreleased = false;
 				goup = true;
 			}
-			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75 && axisreleased))
+			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && Input.GetAxisRaw ("HorizontalJ") <= -0.6 && axisreleased))
 			{
 				axisreleased = false;
 				godown = true;
 			}
-			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75 && axisreleased))
+			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && Input.GetAxisRaw ("HorizontalJ") <= -0.6 && axisreleased))
 			{
 				axisreleased = false;
 				goleft = true;
 			}
-			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75 && axisreleased))
+			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && Input.GetAxisRaw ("HorizontalJ") >= 0.6 && axisreleased))
 			{
 				axisreleased = false;
 				goright = true;
 			}
 
-			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && axisreleased)) //Je m'ocuppe du cas particulier de la hauteur
+			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && axisreleased)) //Je m'ocuppe du cas particulier de la hauteur
 			{
 				axisreleased = false;
 				gouphaut = true;
 			}
-			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && axisreleased))
+			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && axisreleased))
 			{
 				axisreleased = false;
 				godownhaut = true;

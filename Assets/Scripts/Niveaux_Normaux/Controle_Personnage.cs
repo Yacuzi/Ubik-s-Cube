@@ -43,12 +43,12 @@ public class Controle_Personnage : MonoBehaviour
 		bool onedirection = false;
 		
 		//récupération des touches
-		if ((Input.GetButton ("Haut") && !wait) || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75))
+		if ((Input.GetButton ("Haut") && !wait) || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && Input.GetAxisRaw ("HorizontalJ") >= 0.6))
 		{			
 			onedirection = true;
 			directiontemp = Vector3.right;
 		}
-		else if ((Input.GetButton ("Bas") && !wait) || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75))
+		else if ((Input.GetButton ("Bas") && !wait) || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && Input.GetAxisRaw ("HorizontalJ") <= -0.6))
 			{			
 				if (onedirection)
 				{
@@ -58,7 +58,7 @@ public class Controle_Personnage : MonoBehaviour
 				onedirection = true;
 				directiontemp = Vector3.left;
 			}
-			else if ((Input.GetButton ("Gauche") && !wait) || (Input.GetAxisRaw ("VerticalJ") <= -0.75 && Input.GetAxisRaw ("HorizontalJ") <= -0.75))
+			else if ((Input.GetButton ("Gauche") && !wait) || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && Input.GetAxisRaw ("HorizontalJ") <= -0.6))
 				{			
 					if (onedirection)
 					{
@@ -68,7 +68,7 @@ public class Controle_Personnage : MonoBehaviour
 					onedirection = true;
 					directiontemp = Vector3.forward;
 				}
-				else if ((Input.GetButton ("Droite") && !wait) || (Input.GetAxisRaw ("VerticalJ") >= 0.75 && Input.GetAxisRaw ("HorizontalJ") >= 0.75))
+				else if ((Input.GetButton ("Droite") && !wait) || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && Input.GetAxisRaw ("HorizontalJ") >= 0.6))
 					{			
 						if (onedirection)
 						{

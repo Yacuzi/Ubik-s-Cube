@@ -50,6 +50,12 @@ public class Sphere_collectible : MonoBehaviour
 				spherebeep.PlayOneShot (cloche);
 				saveme.SaveSphere ();
 				GetComponent<Renderer> ().enabled = false;
+
+				GameObject[] uisphere = GameObject.FindGameObjectsWithTag ("Total_Sphere");
+				foreach (GameObject ui in uisphere)
+				{
+					ui.GetComponent<CanvasRenderer> ().SetAlpha (1f);
+				}
 			}
 	}
 }

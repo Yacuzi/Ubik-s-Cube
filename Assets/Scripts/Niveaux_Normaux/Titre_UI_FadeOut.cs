@@ -29,7 +29,7 @@ public class Titre_UI_FadeOut : MonoBehaviour
 			if (CanActEnabler)
 				GameObject.FindGameObjectWithTag ("Player").GetComponent<Can_Act> ().canact = true; //Je dis au joueur qu'il peut maintenant agir
 			
-			alpha = GetComponent<CanvasRenderer> ().GetAlpha() - (Time.deltaTime * speedalpha);
+			alpha = GetComponent<CanvasRenderer> ().GetAlpha() - (Time.deltaTime / speedalpha);
 			GetComponent<CanvasRenderer> ().SetAlpha (alpha);
 		}
 	}

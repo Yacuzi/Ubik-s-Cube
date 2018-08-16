@@ -41,15 +41,37 @@ public class Sortie : MonoBehaviour
 	{
 		Perso = GameObject.FindGameObjectWithTag ("Player").GetComponent<Controle_Personnage> ();
 	}
+
+	bool CheatCodePlus ()
+	{
+		int CurrentScene = SceneManager.GetActiveScene().buildIndex;
+		int TotalScene = SceneManager.sceneCountInBuildSettings;
+
+		if (Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.RightArrow) && CurrentScene + 1 < TotalScene)
+			return true;
+		else
+			return false;
+	}
+
+	bool CheatCodeMinus ()
+	{
+		int CurrentScene = SceneManager.GetActiveScene().buildIndex;
+		int TotalScene = SceneManager.sceneCountInBuildSettings;
+
+		if (Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.LeftArrow) && CurrentScene - 1 > 0)
+			return true;
+		else
+			return false;
+	}
 		
 	// Update is called once per frame
 	void Update ()
 	{	
 		Shine (); //Je fais briller la sortie
 				
-		if ((Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.RightArrow)) || (CharacterFacing () && Input.GetButtonDown ("Saut"))) //Je charge le niveau suivant
+		if (CheatCodePlus () || (CharacterFacing () && Input.GetButtonDown ("Saut"))) //Je charge le niveau suivant
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
-		if (Input.GetKey (KeyCode.LeftControl) && Input.GetKey (KeyCode.LeftArrow))//Je charge le niveau précédent
+		if (CheatCodeMinus ())//Je charge le niveau précédent
 		    SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex - 1);
 	}
 }

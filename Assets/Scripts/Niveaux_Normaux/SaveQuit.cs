@@ -36,7 +36,17 @@ public class SaveQuit : MonoBehaviour
 		if (Input.GetKey (KeyCode.Escape))
 			Application.Quit();
 
-		if (Input.GetKey(KeyCode.E) && Input.GetKey(KeyCode.R) && Input.GetKey(KeyCode.Delete))
-			PlayerPrefs.SetInt("Niveau", 1);
+		if (Input.GetKey (KeyCode.E) && Input.GetKey (KeyCode.R) && Input.GetKey (KeyCode.Delete))
+		{
+			PlayerPrefs.SetInt ("Niveau", 1);
+
+			string Sid = "";
+
+			for (int id = 0; id < Total_Sphere.NbTotSphere; id++)
+			{
+				Sid = id.ToString ();
+				PlayerPrefs.SetInt (Sid, 0);
+			}
+		}
 	}
 }
