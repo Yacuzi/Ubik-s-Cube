@@ -98,7 +98,7 @@ public class Cube_Rotations : MonoBehaviour
 			else
 				lacouleur.a = 0f;
 
-			if (lekub.tag != "Verriere" && lekub.tag != "Cube") //Si c'est un kub
+			if (lekub.tag != "Verriere") //Si c'est un kub ou un morceau de la paroi
 			{
 				degrade = (lekub.transform.position.y + 1) / (float)hauteur; //Je détermine sa couleur fonction de sa hauteur
 				lacouleur = new Color (degrade, degrade, degrade); //J'assigne sa couleur

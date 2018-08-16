@@ -14,10 +14,10 @@ public class Sortie : MonoBehaviour
 		bool saut = Perso.ensaut;
 		bool chute = Perso.enchute;
 
-		if ((Vector3.Distance (posperso + regardperso, transform.position) <= 0.25f) && (!saut) && (!chute))
+		if ((Vector3.Distance (posperso, transform.position) <= 0.55f) && (!saut) && (!chute) && Perso.directiontemp == Vector3.zero)
 			return true;
 		else
-			return false;	
+			return false;
 	}
 
 	void Shine () //Je fais briller la sortie
@@ -36,13 +36,21 @@ public class Sortie : MonoBehaviour
 		}
 	}
 
+	void ColorDoor () //Je colore en vert la sortie si le perso est devant
+	{
+		if (CharacterFacing())
+			this.gameObject.GetComponent<Renderer> ().material.color = Color.green;
+		else
+			this.gameObject.GetComponent<Renderer> ().material.color = Color.white;
+	}
+
 	// Use this for initialization
 	void Start ()
 	{
 		Perso = GameObject.FindGameObjectWithTag ("Player").GetComponent<Controle_Personnage> ();
 	}
 
-	bool CheatCodePlus ()
+	bool CheatCodePlus () //Pour aller un niveau après
 	{
 		int CurrentScene = SceneManager.GetActiveScene().buildIndex;
 		int TotalScene = SceneManager.sceneCountInBuildSettings;
@@ -53,7 +61,7 @@ public class Sortie : MonoBehaviour
 			return false;
 	}
 
-	bool CheatCodeMinus ()
+	bool CheatCodeMinus () //Pour aller un niveau avant
 	{
 		int CurrentScene = SceneManager.GetActiveScene().buildIndex;
 		int TotalScene = SceneManager.sceneCountInBuildSettings;
@@ -67,8 +75,10 @@ public class Sortie : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{	
-		Shine (); //Je fais briller la sortie
-				
+		//Shine (); //Je fais briller la sortie
+			
+		ColorDoor (); //Je colore en vert la sortie si le perso est devant
+
 		if (CheatCodePlus () || (CharacterFacing () && Input.GetButtonDown ("Saut"))) //Je charge le niveau suivant
 			SceneManager.LoadScene (SceneManager.GetActiveScene ().buildIndex + 1);
 		if (CheatCodeMinus ())//Je charge le niveau précédent

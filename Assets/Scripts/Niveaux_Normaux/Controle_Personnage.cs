@@ -30,8 +30,11 @@ public class Controle_Personnage : MonoBehaviour
 
 		alljoysticks = Input.GetJoystickNames ();
 
-		if (alljoysticks [0] != "")
-			XBox360 = true;
+		if (alljoysticks.Length > 0)
+			if (alljoysticks [0] != "")
+				XBox360 = true;
+			else
+				XBox360 = false;
 		else
 			XBox360 = false;
 	}
@@ -129,7 +132,7 @@ public class Controle_Personnage : MonoBehaviour
 				else if ((kubtesty - 1F == persoy) && (kubtestx == persox) && (kubtestz == persoz))
 				//S'il y a un kub au-dessus du joueur
 					return false;
-				else if (persoy + 1F == hauteur)
+					else if (persoy + 1F == hauteur)
 				//Si le joueur est au plus haut du niveau
 						return false;
 			}
@@ -140,7 +143,7 @@ public class Controle_Personnage : MonoBehaviour
 
 	protected void InputJump ()
 	{		
-		if ((Input.GetButtonUp ("Saut")) && (!pousse))
+		if ((Input.GetButtonDown ("Saut")) && (!pousse))
 		{
 			//Je déclare le perso comme en saut
 			ensaut = true;
@@ -557,7 +560,7 @@ public class Controle_Personnage : MonoBehaviour
 		//Je déclare d'où je récupère les infos et méthodes sur les kubs
 		Kubinfos = GetComponent<Cube_Rotations> ();
 		//Je récupère la hauteur du cube
-		hauteur = Mathf.RoundToInt(GetComponent<Cube_Rotations>().GetCubeSize().y);
+		hauteur = Mathf.RoundToInt (GetComponent<Cube_Rotations> ().GetCubeSize ().y);
 	}
 
 	void LateUpdate () //Je fais l'update en dernière à cause du nettoyage de la couleur des cubes et que je sais pas programmer proprement
