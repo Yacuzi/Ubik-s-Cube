@@ -12,8 +12,14 @@ public class Sortie : MonoBehaviour
 		Vector3 posperso = Perso.gameObject.transform.position;
 		bool saut = Perso.ensaut;
 		bool chute = Perso.enchute;
+		bool facing = false;
 
-		if ((Vector3.Distance (posperso, transform.position) <= 0.55f) && (!saut) && (!chute) && Perso.directiontemp == Vector3.zero)
+		if ((Vector3.Distance (posperso, transform.position) <= 0.55f) && Perso.directiontemp == Vector3.zero) //Si je suis à côté de la porte et que je vais dans aucune direction
+			facing = true; //Je peux prendre la porte
+		if (Vector3.Distance (posperso + (Perso.direction * 0.5f), transform.position) <= 0.2f) //Si je suis à côté de la porte et que je vais vers elle
+			facing = true; //Je peux prendre la porte
+
+		if (facing && !saut && !chute)
 			return true;
 		else
 			return false;

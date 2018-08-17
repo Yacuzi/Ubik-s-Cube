@@ -138,7 +138,7 @@ public class Cube_Rotations : MonoBehaviour
 
 	bool InputPrepareRotation () //Méthode pour déterminer quelle partie du Cube le joueur sélectionne
 	{
-		if (Perso.Immobile ()) //Si le perso a fini toutes ses actions je peux sélectionner quelquechose
+		if (Perso.Immobile () && !Camera.main.GetComponent<Ubik_Camera_Smooth> ().Rot360) //Si le perso a fini toutes ses actions  et que la caméra bouge pas je peux sélectionner quelquechose
 		{
 			if (Rotation_Largeur) //Je récupère les inputs en précisant bien que je le fais seulement si j'ai le droit dans ce niveau
 				Larg = Input.GetButton ("Largeur");

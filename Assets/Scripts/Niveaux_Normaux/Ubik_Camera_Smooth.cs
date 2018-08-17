@@ -6,10 +6,10 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 {
 	public float smoothTime = 2F;
 	public float delayrotcam = 1f;
-	public bool CanRotate = true, CanZoom = true;
+	public bool CanRotate = true, CanZoom = true, Can360;
 
 	[HideInInspector]
-	public bool vuesecondaire;
+	public bool vuesecondaire, Rot360;
 	[HideInInspector]
 	public Vector3[] poscam = new Vector3[4];
 	[HideInInspector]
@@ -25,6 +25,7 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	protected Vector3 cameraposprec;
 	protected float timer;
 	protected int largeur, hauteur, longueur;
+	protected float angletot;
 
 	// Use this for initialization
 	void Start ()
@@ -65,20 +66,22 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		//J'incrémente le timer
 		MyTimer ();
 
-		//J'adapte la caméra à la situation actuelle
-		OrthoSize ();
-		CameraLookAt ();
-		CameraPos ();
-
 		if (Perso.GetComponent<Can_Act> ().canact) //J'attends que l'UI de fade soit passé pour permettre au joueur de faire des trucs
 		{
 			//Je récupère les inputs du joueur
 			ChangeVue ();
 			GetInputRotation ();
-
-			//Je sauvegarde l'ancienne position de la caméra
-			SaveCameraPosPrec ();
 		}
+
+		//J'adapte la caméra à la situation actuelle
+		OrthoSize ();
+		CameraLookAt ();
+		Turn360 ();
+		if (!Rot360)
+			CameraPos ();
+
+		//Je sauvegarde l'ancienne position de la caméra
+		SaveCameraPosPrec ();
 	}
 
 	void GetInputRotation ()
@@ -86,24 +89,58 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 		if (CanRotate) //Si je permet à ma caméra de tourner
 		{
 			//jJe détermine à quel point est la caméra selon la rotation
-			if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && !Perso.GetComponent<Cube_Rotations> ().RotationReady ())
+			if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraH")) && !Perso.GetComponent<Cube_Rotations> ().RotationReady () && (!Rot360))
 			{
 				timer = 0;
 				rotationH = true;
-				ChangeCameraPos (1);
+
+				if (Can360) //Si la caméra est faite pour faire des tours à 360 je fais des tours à 360
+					Rot360 = true;
+				else
+					ChangeCameraPos (1);
 			}
 
-			if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && !Perso.GetComponent<Cube_Rotations> ().RotationReady ())
+			if ((timer >= delayrotcam) && (Input.GetButtonDown ("CameraAH")) && !Perso.GetComponent<Cube_Rotations> ().RotationReady () && (!Rot360))
 			{
 				timer = 0;
 				rotationAH = true;
-				ChangeCameraPos (-1);
+
+				if (Can360) //Si la caméra est faite pour faire des tours à 360 je fais des tours à 360
+					Rot360 = true;
+				else
+					ChangeCameraPos (-1);
 			}
 		}
 		else if (Input.GetButtonDown ("CameraH") || Input.GetButtonDown ("CameraAH")) //Si j'interdis la rotation de la caméra mais que le joueur essaye de la tourner
 			{
 				GameObject.Find ("No_Camera").GetComponent<CanvasRenderer> ().SetAlpha (1f);//J'affiche rapidement l'icône d'interdiction de rotation de la caméra
 			}
+	}
+
+	void Turn360 ()
+	{
+		if (Rot360)
+		{			
+			float angle = 0f;
+
+			if (rotationAH)  //Si je tourne dans le sens anti-horaire
+			angle = -2f;
+			else if (rotationH) //Si je tourne dans le sens horaire
+				angle = 2f;
+		
+			if (angletot < 360f) //Si j'ai pas fait tout le tour
+			{
+				this.transform.RotateAround (target, Vector3.up, angle);
+				angletot += Mathf.Abs (angle);
+			}
+			else //Si j'ai fini mon tour je reset tout
+			{
+				angletot = 0f;
+				Rot360 = false;
+				rotationH = false;
+				rotationAH = false;
+			}
+		}
 	}
 
 	void MyTimer ()
@@ -196,14 +233,11 @@ public class Ubik_Camera_Smooth : MonoBehaviour
 	{
 		if (!vuesecondaire)
 		{
-
 			//Je détermine vers où doit aller la caméra
 			finishpoint = poscam [GetCamNumber ()];
-
 		}
 		else
-		{
-			
+		{			
 			//Je récupère la position du perso
 			float persox = Perso.transform.position.x;
 			float persoy = Perso.transform.position.y;

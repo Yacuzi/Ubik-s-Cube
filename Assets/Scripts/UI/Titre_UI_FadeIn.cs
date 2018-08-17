@@ -17,12 +17,14 @@ public class Titre_UI_FadeIn : MonoBehaviour
 
 	void Update ()
 	{
-		if (temps <= timer) //j'attends X secondes avant de faire disparaître le titre			
+		if (temps <= timer + speedalpha) //j'attends X secondes avant de faire apparaître le titre			
 			temps += Time.deltaTime;
+		else
+			ended = true;
 
 		if (temps > timer && alpha < 1)
 		{
-			alpha += Time.deltaTime * speedalpha;
+			alpha += Time.deltaTime / speedalpha;
 			GetComponent<CanvasRenderer> ().SetAlpha (alpha);
 		}
 	}
