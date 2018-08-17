@@ -10,7 +10,6 @@ public class Sortie : MonoBehaviour
 	{
 		//Je récupère la position du personnage et son regard et son état
 		Vector3 posperso = Perso.gameObject.transform.position;
-		Vector3 regardperso = Perso.direction * 0.5f;
 		bool saut = Perso.ensaut;
 		bool chute = Perso.enchute;
 

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Total_Sphere : MonoBehaviour
 {
-	public static int NbTotSphere = 16;
+	public static int NbTotSphere = 20;
 
 	public int TotalSphere () //Pour déterminer le nombre total de sphères du joueur
 	{

@@ -23,7 +23,7 @@ public class Cube_Rotations : MonoBehaviour
 	private int clignoter = 0;
 	private Vector3 centreRot;
 	private float angletot;
-	private bool goup, godown, goleft, goright, gouphaut, godownhaut, axisreleased;
+	private bool goup, godown, goleft, goright, axisreleased;
 	private bool cligne, rotantikub;
 	private string rangee;
 	private Color lacouleur;
@@ -272,42 +272,29 @@ public class Cube_Rotations : MonoBehaviour
 			godown = false;
 			goleft = false;
 			goright = false;
-			gouphaut = false;
-			godownhaut = false;
 
 			if (Mathf.Abs (Input.GetAxisRaw ("VerticalJ")) <= 0.5f && Mathf.Abs (Input.GetAxisRaw ("HorizontalJ")) <= 0.5f) //Si je relache le stick de manette je peux à nouveau changer de direction			
 			axisreleased = true;
 		
-			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && Input.GetAxisRaw ("HorizontalJ") >= 0.6 && axisreleased))
+			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") >= 0.6f && axisreleased))
 			{
 				axisreleased = false;
 				goup = true;
 			}
-			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && Input.GetAxisRaw ("HorizontalJ") <= -0.6 && axisreleased))
+			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") <= -0.6f && axisreleased))
 			{
 				axisreleased = false;
 				godown = true;
 			}
-			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && Input.GetAxisRaw ("HorizontalJ") <= -0.6 && axisreleased))
+			if (Input.GetButtonDown ("Gauche") || (Input.GetAxisRaw ("HorizontalJ") <= -0.6f && axisreleased))
 			{
 				axisreleased = false;
 				goleft = true;
 			}
-			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && Input.GetAxisRaw ("HorizontalJ") >= 0.6 && axisreleased))
+			if (Input.GetButtonDown ("Droite") || (Input.GetAxisRaw ("HorizontalJ") >= 0.6f && axisreleased))
 			{
 				axisreleased = false;
 				goright = true;
-			}
-
-			if (Input.GetButtonDown ("Haut") || (Input.GetAxisRaw ("VerticalJ") <= -0.6 && axisreleased)) //Je m'ocuppe du cas particulier de la hauteur
-			{
-				axisreleased = false;
-				gouphaut = true;
-			}
-			if (Input.GetButtonDown ("Bas") || (Input.GetAxisRaw ("VerticalJ") >= 0.6 && axisreleased))
-			{
-				axisreleased = false;
-				godownhaut = true;
 			}
 		}
 	}
@@ -342,9 +329,9 @@ public class Cube_Rotations : MonoBehaviour
 	{
 		if (rangee == "y") //Si je sélectionne la hauteur, la caméra ne change rien, c'est trop facile
 		{
-			if (gouphaut && rangeey < hauteur - 1) //Je je veux aller vers le haut et que je suis pas déjà tout en haut
+			if (goup && rangeey < hauteur - 1) //Je je veux aller vers le haut et que je suis pas déjà tout en haut
 				rangeey++;
-			if (godownhaut && rangeey > 0) //Je je veux aller vers le bas et que je suis pas déjà tout en bas
+			if (godown && rangeey > 0) //Je je veux aller vers le bas et que je suis pas déjà tout en bas
 				rangeey--;
 		}
 
